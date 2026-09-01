@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CrowdWise — Demo</title>
+<style>
+  :root{
+    --forest:#1B4332;
+    --forest-dark:#0F2A1E;
+    --forest-mid:#2D5A45;
+    --sage:#E8F0E6;
+    --gold:#D4A24E;
+    --gold-light:#FCF0DB;
+    --ink:#1C1C1C;
+    --muted:#6B7A72;
+    --card:#F4F7F3;
+    --white:#fff;
+    --red:#C24A3B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Calibri,Arial,sans-serif;
+    background:var(--sage);
+    color:var(--ink);
+  }
+  h1,h2,h3,.serif{ font-family:Cambria,Georgia,"Times New Roman",serif; }
+
+  /* Top nav */
+  .topbar{
+    background:var(--forest-dark);
+    color:var(--white);
+    padding:18px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{
+    width:34px;height:34px;border-radius:9px;
+    background:var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:var(--forest-dark); font-size:16px;
+  }
+  .brand-name{ font-size:19px; font-weight:700; letter-spacing:.2px; }
+  .tabs{ display:flex; gap:6px; background:rgba(255,255,255,.08); padding:4px; border-radius:10px; }
+  .tab-btn{
+    border:none; background:transparent; color:#cfe0d3; padding:8px 18px;
+    border-radius:8px; font-size:14px; cursor:pointer; font-weight:600;
+    transition:background .15s, color .15s;
+  }
+  .tab-btn.active{ background:var(--gold); color:var(--forest-dark); }
+  .tag{
+    font-size:12px; color:#a9c2af; border:1px solid rgba(255,255,255,.2);
+    padding:4px 10px; border-radius:20px;
+  }
+
+  .stage{ padding:40px 32px 70px; max-width:1280px; margin:0 auto; }
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  .view-header{ margin-bottom:28px; }
+  .view-header h1{ font-size:26px; margin:0 0 6px; color:var(--forest-dark); }
+  .view-header p{ margin:0; color:var(--muted); font-size:14.5px; max-width:640px; }
+
+  /* ===== Consumer app view: phone mock + side notes ===== */
+  .consumer-wrap{ display:flex; gap:48px; align-items:flex-start; flex-wrap:wrap; }
+  .phone{
+    width:340px; min-width:340px;
+    background:var(--forest-dark);
+    border-radius:34px;
+    padding:14px;
+    box-shadow:0 30px 60px -20px rgba(15,42,30,.5);
+  }
+  .phone-screen{
+    background:var(--white);
+    border-radius:22px;
+    overflow:hidden;
+    min-height:640px;
+    display:flex;
+    flex-direction:column;
+  }
+  .phone-status{ display:flex; justify-content:space-between; padding:10px 18px 0; font-size:12px; color:var(--muted); }
+  .phone-app-header{
+    padding:14px 18px 16px;
+    background:var(--forest);
+    color:var(--white);
+  }
+  .phone-app-header .greet{ font-size:12px; color:#bcd6c4; margin-bottom:2px; }
+  .phone-app-header .mall{ font-size:19px; font-weight:700; font-family:Cambria,serif; }
+  .phone-body{ padding:16px; flex:1; overflow-y:auto; }
+  .section-label{ font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin:16px 0 8px; }
+  .section-label:first-child{ margin-top:0; }
+
+  .zone-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:11px 12px; border-radius:12px; background:var(--card);
+    margin-bottom:8px; cursor:pointer; border:1px solid transparent;
+    transition:border-color .15s, background .15s;
+  }
+  .zone-row:hover{ border-color:var(--forest-mid); }
+  .zone-left{ display:flex; align-items:center; gap:10px; }
+  .dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+  .dot.low{ background:#4E9A64; }
+  .dot.mid{ background:var(--gold); }
+  .dot.high{ background:var(--red); }
+  .zone-name{ font-size:13.5px; font-weight:600; }
+  .zone-meta{ font-size:11.5px; color:var(--muted); }
+  .zone-level{ font-size:11.5px; font-weight:700; }
+  .zone-level.low{ color:#3C7A4E; }
+  .zone-level.mid{ color:#9C7325; }
+  .zone-level.high{ color:var(--red); }
+
+  .incentive-card{
+    background:linear-gradient(135deg, var(--gold-light), #f8e2bd);
+    border-radius:14px; padding:14px; margin-top:4px;
+    border:1px solid #eecf94;
+  }
+  .incentive-card .badge{
+    display:inline-block; background:var(--gold); color:var(--forest-dark);
+    font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; margin-bottom:8px;
+  }
+  .incentive-card .title{ font-size:14px; font-weight:700; margin-bottom:3px; }
+  .incentive-card .sub{ font-size:12px; color:#7a5a1e; }
+
+  .trip-step{
+    display:flex; gap:10px; padding:9px 0;
+    border-bottom:1px dashed #dfe8e0;
+  }
+  .trip-step:last-child{ border-bottom:none; }
+  .trip-time{ font-size:12.5px; font-weight:700; color:var(--forest); width:54px; flex:none; }
+  .trip-what{ font-size:13px; }
+  .trip-what .name{ font-weight:600; }
+  .trip-what .note{ display:block; font-size:11.5px; color:var(--muted); margin-top:1px; }
+
+  .tabbar{
+    display:flex; justify-content:space-around; padding:10px 6px;
+    border-top:1px solid #eef1ee; background:var(--white);
+  }
+  .tabbar-item{ text-align:center; font-size:10px; color:var(--muted); }
+  .tabbar-item.active{ color:var(--forest); font-weight:700; }
+  .tabbar-icon{ width:20px; height:20px; border-radius:6px; background:#e6ece7; margin:0 auto 3px; }
+  .tabbar-item.active .tabbar-icon{ background:var(--forest); }
+
+  .side-notes{ flex:1; min-width:280px; padding-top:6px; }
+  .note-card{
+    background:var(--white); border-radius:12px; padding:16px 18px; margin-bottom:14px;
+    border:1px solid #dbe6dc;
+  }
+  .note-card h3{ margin:0 0 6px; font-size:14.5px; color:var(--forest-dark); }
+  .note-card p{ margin:0; font-size:13px; color:var(--muted); line-height:1.5; }
+
+  /* ===== Dashboard view ===== */
+  .dash-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
+  .stat-card{
+    background:var(--white); border-radius:14px; padding:18px 20px;
+    border:1px solid #dbe6dc;
+  }
+  .stat-card .label{ font-size:12px; color:var(--muted); margin-bottom:8px; }
+  .stat-card .value{ font-size:28px; font-weight:700; color:var(--forest-dark); font-family:Cambria,serif; }
+  .stat-card .delta{ font-size:12px; margin-top:6px; font-weight:600; }
+  .delta.up{ color:#3C7A4E; }
+  .delta.down{ color:var(--red); }
+
+  .dash-main{ display:grid; grid-template-columns:1.5fr 1fr; gap:20px; }
+  .panel{ background:var(--white); border-radius:14px; padding:20px 22px; border:1px solid #dbe6dc; }
+  .panel h3{ margin:0 0 4px; font-size:15px; color:var(--forest-dark); }
+  .panel .sub{ font-size:12px; color:var(--muted); margin-bottom:16px; }
+
+  .bars{ display:flex; align-items:flex-end; gap:8px; height:170px; }
+  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .bar{ width:100%; border-radius:5px 5px 0 0; background:var(--forest-mid); position:relative; }
+  .bar.peak{ background:var(--red); opacity:.85; }
+  .bar.offpeak{ background:var(--gold); }
+  .bar-label{ font-size:10px; color:var(--muted); margin-top:6px; }
+
+  .legend{ display:flex; gap:16px; margin-top:14px; font-size:11.5px; color:var(--muted); }
+  .legend span{ display:inline-flex; align-items:center; gap:5px; }
+  .legend i{ width:9px; height:9px; border-radius:2px; display:inline-block; }
+
+  .tenant-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0; border-bottom:1px solid #eef1ee; font-size:13px;
+  }
+  .tenant-row:last-child{ border-bottom:none; }
+  .tenant-name{ font-weight:600; }
+  .tenant-status{ font-size:11px; padding:3px 9px; border-radius:20px; font-weight:700; }
+  .tenant-status.understaff{ background:#fbe4e0; color:var(--red); }
+  .tenant-status.ok{ background:#e2f0e5; color:#3C7A4E; }
+  .tenant-status.over{ background:var(--gold-light); color:#9C7325; }
+
+  .esg-row{ display:flex; justify-content:space-between; padding:9px 0; font-size:13px; border-bottom:1px solid #eef1ee; }
+  .esg-row:last-child{ border-bottom:none; }
+  .esg-row .k{ color:var(--muted); }
+  .esg-row .v{ font-weight:700; color:var(--forest-dark); }
+
+  footer.note{
+    text-align:center; color:var(--muted); font-size:12px; padding:24px 0 0;
+  }
+
+  @media (max-width:900px){
+    .dash-main{ grid-template-columns:1fr; }
+    .dash-grid{ grid-template-columns:repeat(2,1fr); }
+    .consumer-wrap{ flex-direction:column; align-items:center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">CW</div>
+    <div class="brand-name">CrowdWise</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-view="consumer">Consumer App</button>
+    <button class="tab-btn" data-view="dashboard">Mall Dashboard</button>
+  </div>
+  <div class="tag">Demo — sample data</div>
+</div>
+
+<div class="stage">
+
+  <!-- CONSUMER VIEW -->
+  <div class="view active" id="view-consumer">
+    <div class="view-header">
+      <h1>Plan your visit before you leave home</h1>
+      <p>Live zone density, a Green Time discount for off-peak visits, and a trip plan built around when things are actually free.</p>
+    </div>
+
+    <div class="consumer-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-status"><span>9:41</span><span>●●●●  Wi-Fi  82%</span></div>
+          <div class="phone-app-header">
+            <div class="greet">Good afternoon</div>
+            <div class="mall">Siam Central — Today</div>
+          </div>
+          <div class="phone-body">
+            <div class="section-label">Zone density now</div>
+
+            <div class="zone-row" onclick="pulse(this)">
+              <div class="zone-left">
+                <span class="dot high"></span>
+                <div><div class="zone-name">Food Court</div><div class="zone-meta">18–22 min wait</div></div>
+              </div>
+              <div class="zone-level high">Busy</div>
+            </div>
+
+            <div class="zone-row" onclick="pulse(this)">
+              <div class="zone-left">
+                <span class="dot mid"></span>
+                <div><div class="zone-name">Cinema Lobby</div><div class="zone-meta">Filling up by 19:00</div></div>
+              </div>
+              <div class="zone-level mid">Moderate</div>
+            </div>
+
+            <div class="zone-row" onclick="pulse(this)">
+              <div class="zone-left">
+                <span class="dot low"></span>
+                <div><div class="zone-name">Parking B2</div><div class="zone-meta">120 spaces open</div></div>
+              </div>
+              <div class="zone-level low">Quiet</div>
+            </div>
+
+            <div class="section-label">Green Time Incentive</div>
+            <div class="incentive-card">
+              <span class="badge">15% OFF</span>
+              <div class="title">Visit the food court before 17:00</div>
+              <div class="sub">Beat the rush and save on your bill — auto-applied at checkout.</div>
+            </div>
+
+            <div class="section-label">Your Smart Trip — Sat, 3:30 PM</div>
+            <div class="trip-step">
+              <div class="trip-time">17:00</div>
+              <div class="trip-what"><span class="name">Early dinner, Food Court</span><span class="note">Green Time discount applies</span></div>
+            </div>
+            <div class="trip-step">
+              <div class="trip-time">18:15</div>
+              <div class="trip-what"><span class="name">Browse, 2nd Floor</span><span class="note">Low density window</span></div>
+            </div>
+            <div class="trip-step">
+              <div class="trip-time">19:00</div>
+              <div class="trip-what"><span class="name">Movie, Cinema Hall 3</span><span class="note">Book before it fills</span></div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabbar-item active"><div class="tabbar-icon"></div>Explore</div>
+            <div class="tabbar-item"><div class="tabbar-icon"></div>Trip</div>
+            <div class="tabbar-item"><div class="tabbar-icon"></div>Offers</div>
+            <div class="tabbar-item"><div class="tabbar-icon"></div>Profile</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-notes">
+        <div class="note-card">
+          <h3>Zone density</h3>
+          <p>Pulled from forecasted crowd patterns, live traffic, and queue/reservation data — updates through the day, not just a static forecast.</p>
+        </div>
+        <div class="note-card">
+          <h3>Green Time Incentive</h3>
+          <p>The core mechanism: a targeted discount that makes it worth arriving off-peak, funded by better tenant margins during quiet hours.</p>
+        </div>
+        <div class="note-card">
+          <h3>Smart Trip Builder</h3>
+          <p>Sequences the whole visit around forecasted density, so shoppers don't need to build in buffer time for unpredictable crowds.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD VIEW -->
+  <div class="view" id="view-dashboard">
+    <div class="view-header">
+      <h1>Mall & tenant operations, at a glance</h1>
+      <p>What management and tenants see: forecasted footfall, staffing signals, and the ESG numbers behind the Green Time Incentive.</p>
+    </div>
+
+    <div class="dash-grid">
+      <div class="stat-card">
+        <div class="label">Off-peak footfall uplift</div>
+        <div class="value">+18%</div>
+        <div class="delta up">▲ vs. last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Avg. queue time (peak)</div>
+        <div class="value">12 min</div>
+        <div class="delta up">▼ 6 min saved</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">kWh saved this week</div>
+        <div class="value">3,240</div>
+        <div class="delta up">▲ 9% vs. baseline</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">CO₂e avoided</div>
+        <div class="value">1.4t</div>
+        <div class="delta up">▲ tracking to target</div>
+      </div>
+    </div>
+
+    <div class="dash-main">
+      <div class="panel">
+        <h3>Forecasted footfall — today</h3>
+        <div class="sub">Zone: Food Court · updates every 15 min</div>
+        <div class="bars">
+          <div class="bar-col"><div class="bar" style="height:28%"></div><div class="bar-label">10a</div></div>
+          <div class="bar-col"><div class="bar" style="height:38%"></div><div class="bar-label">11a</div></div>
+          <div class="bar-col"><div class="bar" style="height:52%"></div><div class="bar-label">12p</div></div>
+          <div class="bar-col"><div class="bar peak" style="height:94%"></div><div class="bar-label">1p</div></div>
+          <div class="bar-col"><div class="bar" style="height:60%"></div><div class="bar-label">2p</div></div>
+          <div class="bar-col"><div class="bar offpeak" style="height:22%"></div><div class="bar-label">3p</div></div>
+          <div class="bar-col"><div class="bar offpeak" style="height:30%"></div><div class="bar-label">4p</div></div>
+          <div class="bar-col"><div class="bar" style="height:55%"></div><div class="bar-label">5p</div></div>
+          <div class="bar-col"><div class="bar peak" style="height:88%"></div><div class="bar-label">6p</div></div>
+          <div class="bar-col"><div class="bar" style="height:65%"></div><div class="bar-label">7p</div></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--red)"></i>Peak</span>
+          <span><i style="background:var(--forest-mid)"></i>Normal</span>
+          <span><i style="background:var(--gold)"></i>Green Time window</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Tenant staffing signal</h3>
+        <div class="sub">Based on forecast vs. current schedule</div>
+        <div class="tenant-row"><span class="tenant-name">MK Restaurant</span><span class="tenant-status understaff">Understaffed 1–2p</span></div>
+        <div class="tenant-row"><span class="tenant-name">Kinokuniya</span><span class="tenant-status ok">On track</span></div>
+        <div class="tenant-row"><span class="tenant-name">Cinema Hall 3</span><span class="tenant-status over">Overstaffed 3–4p</span></div>
+        <div class="tenant-row"><span class="tenant-name">Central Food Hall</span><span class="tenant-status understaff">Understaffed 6–7p</span></div>
+        <div class="tenant-row"><span class="tenant-name">Uniqlo</span><span class="tenant-status ok">On track</span></div>
+      </div>
+    </div>
+
+    <div class="dash-main" style="margin-top:20px;">
+      <div class="panel">
+        <h3>Public ESG dashboard preview</h3>
+        <div class="sub">What shoppers and investors see</div>
+        <div class="esg-row"><span class="k">kWh saved vs. baseline</span><span class="v">3,240 kWh</span></div>
+        <div class="esg-row"><span class="k">CO₂e reduced</span><span class="v">1.4 tonnes</span></div>
+        <div class="esg-row"><span class="k">Parking search time avoided</span><span class="v">410 hrs</span></div>
+        <div class="esg-row"><span class="k">Accessible time-slot adoption</span><span class="v">27%</span></div>
+      </div>
+      <div class="panel">
+        <h3>Green Time revenue impact</h3>
+        <div class="sub">Estimated, current pilot zone</div>
+        <div class="esg-row"><span class="k">Off-peak transactions uplifted</span><span class="v">+412</span></div>
+        <div class="esg-row"><span class="k">Recovered peak-hour sales</span><span class="v">฿86,400</span></div>
+        <div class="esg-row"><span class="k">Self-serve promos launched</span><span class="v">14 tenants</span></div>
+        <div class="esg-row"><span class="k">Platform fee revenue</span><span class="v">฿9,200</span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="note">Rough demo for mentor session · sample data, not live · CrowdWise — Team Long Do Na</footer>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const views = document.querySelectorAll('.view');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      views.forEach(v => v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('view-' + btn.dataset.view).classList.add('active');
+    });
+  });
+  function pulse(el){
+    el.style.transition = 'transform .12s';
+    el.style.transform = 'scale(0.98)';
+    setTimeout(() => el.style.transform = 'scale(1)', 120);
+  }
+</script>
+
+</body>
+</html>
