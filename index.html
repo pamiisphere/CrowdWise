@@ -67,7 +67,9 @@
   /* ===== Consumer app view: phone mock + side notes ===== */
   .consumer-wrap{ display:flex; gap:48px; align-items:flex-start; flex-wrap:wrap; }
   .phone{
-    width:340px; min-width:340px;
+    width:100%;
+    max-width:340px;
+    flex:0 1 340px;
     background:var(--forest-dark);
     border-radius:34px;
     padding:14px;
@@ -77,7 +79,7 @@
     background:var(--white);
     border-radius:22px;
     overflow:hidden;
-    min-height:640px;
+    aspect-ratio:9/19.5;
     display:flex;
     flex-direction:column;
   }
@@ -320,6 +322,32 @@
     .dash-main{ grid-template-columns:1fr; }
     .dash-grid{ grid-template-columns:repeat(2,1fr); }
     .consumer-wrap{ flex-direction:column; align-items:center; }
+    .side-notes{ min-width:0; width:100%; max-width:500px; }
+  }
+
+  /* ===== Small screens: phone browser viewing this demo itself ===== */
+  @media (max-width:640px){
+    .stage{ padding:28px 18px 56px; }
+    .view-header h1{ font-size:22px; }
+    .view-header p{ font-size:13.5px; }
+    .consumer-wrap{ gap:28px; }
+  }
+
+  @media (max-width:480px){
+    .topbar{ padding:14px 16px; flex-wrap:wrap; gap:10px 14px; }
+    .brand-name{ font-size:17px; }
+    .tabs{ order:3; width:100%; justify-content:center; }
+    .tag{ font-size:11px; padding:3px 8px; }
+    .stage{ padding:22px 14px 48px; }
+    .view-header h1{ font-size:19px; }
+    .dash-grid{ grid-template-columns:1fr 1fr; gap:10px; }
+    .stat-card{ padding:14px 16px; }
+    .stat-card .value{ font-size:23px; }
+    .panel{ padding:16px 16px; }
+  }
+
+  @media (max-width:360px){
+    .dash-grid{ grid-template-columns:1fr; }
   }
 </style>
 </head>
