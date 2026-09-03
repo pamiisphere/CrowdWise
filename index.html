@@ -89,7 +89,10 @@
   }
   .phone-app-header .greet{ font-size:12px; color:#bcd6c4; margin-bottom:2px; }
   .phone-app-header .mall{ font-size:19px; font-weight:700; font-family:Cambria,serif; }
-  .phone-body{ padding:16px; flex:1; overflow-y:auto; }
+  .phone-body{ padding:16px; flex:1; overflow-y:auto; min-height:0; }
+  .phone-view{ display:none; }
+  .phone-view.active{ display:block; }
+
   .section-label{ font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin:16px 0 8px; }
   .section-label:first-child{ margin-top:0; }
 
@@ -105,7 +108,13 @@
   .dot.low{ background:#4E9A64; }
   .dot.mid{ background:var(--gold); }
   .dot.high{ background:var(--red); }
+  .zone-name-row{ display:flex; align-items:center; gap:6px; }
   .zone-name{ font-size:13.5px; font-weight:600; }
+  .floor-chip{
+    font-size:10px; font-weight:700; color:var(--forest);
+    background:var(--sage); border:1px solid #cfe0d3;
+    padding:1px 6px; border-radius:6px;
+  }
   .zone-meta{ font-size:11.5px; color:var(--muted); }
   .zone-level{ font-size:11.5px; font-weight:700; }
   .zone-level.low{ color:#3C7A4E; }
@@ -114,7 +123,7 @@
 
   .incentive-card{
     background:linear-gradient(135deg, var(--gold-light), #f8e2bd);
-    border-radius:14px; padding:14px; margin-top:4px;
+    border-radius:14px; padding:14px; margin-top:4px; margin-bottom:8px;
     border:1px solid #eecf94;
   }
   .incentive-card .badge{
@@ -130,15 +139,99 @@
   }
   .trip-step:last-child{ border-bottom:none; }
   .trip-time{ font-size:12.5px; font-weight:700; color:var(--forest); width:54px; flex:none; }
-  .trip-what{ font-size:13px; }
+  .trip-what{ font-size:13px; flex:1; }
   .trip-what .name{ font-weight:600; }
-  .trip-what .note{ display:block; font-size:11.5px; color:var(--muted); margin-top:1px; }
+  .trip-what .note{ display:flex; align-items:center; gap:5px; font-size:11.5px; color:var(--muted); margin-top:1px; }
+  .trip-check{
+    width:16px; height:16px; border-radius:50%; background:#4E9A64; color:var(--white);
+    display:inline-flex; align-items:center; justify-content:center; font-size:10px; flex:none;
+  }
+
+  /* Department store mini-map */
+  .floor-tabs{ display:flex; gap:6px; margin-bottom:12px; }
+  .floor-pill{
+    border:1px solid var(--forest-mid); background:var(--white); color:var(--forest-mid);
+    font-size:11.5px; font-weight:700; padding:5px 13px; border-radius:20px;
+    cursor:pointer; transition:background .15s, color .15s;
+  }
+  .floor-pill.active{ background:var(--forest); color:var(--white); border-color:var(--forest); }
+  .mini-map{
+    display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;
+  }
+  .map-block{
+    border-radius:10px; padding:10px 12px; min-height:52px;
+    display:flex; align-items:flex-end; font-size:11.5px; font-weight:700;
+    color:var(--white); opacity:.55; transition:opacity .15s, transform .15s;
+  }
+  .map-block.on{ opacity:1; }
+  .map-block.cinema{ background:var(--gold); color:var(--forest-dark); }
+  .map-block.etc{ background:#8fbf9f; }
+  .map-block.food{ background:var(--red); grid-column:1 / span 2; }
+  .map-caption{ font-size:11px; color:var(--muted); margin:0 0 14px; }
+
+  /* Parking lot */
+  .parking-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:11px 12px; border-radius:12px; background:var(--card);
+    margin-bottom:8px; cursor:pointer; border:1px solid transparent;
+    transition:border-color .15s;
+  }
+  .parking-row:hover{ border-color:var(--forest-mid); }
+  .parking-name{ font-size:13.5px; font-weight:600; }
+  .parking-badge{ font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:20px; }
+  .parking-badge.low{ background:#fbe4e0; color:var(--red); }
+  .parking-badge.mid{ background:var(--gold-light); color:#9C7325; }
+  .parking-badge.high{ background:#e2f0e5; color:#3C7A4E; }
+
+  /* Offers tab */
+  .offer-card{
+    display:flex; align-items:center; gap:12px; padding:11px 12px;
+    border-radius:12px; background:var(--card); margin-bottom:8px;
+    border:1px solid transparent; cursor:pointer; transition:border-color .15s;
+  }
+  .offer-card:hover{ border-color:var(--forest-mid); }
+  .offer-logo{
+    width:36px; height:36px; border-radius:50%; flex:none;
+    background:var(--white); border:1.5px solid var(--forest-mid);
+    display:flex; align-items:center; justify-content:center;
+    font-size:10.5px; font-weight:700; color:var(--forest);
+  }
+  .offer-info{ flex:1; min-width:0; }
+  .offer-info .name{ font-size:13.5px; font-weight:700; }
+  .offer-info .desc{ font-size:11.5px; color:var(--muted); }
+  .offer-pct{ font-size:13px; font-weight:700; color:var(--red); flex:none; }
+  .offer-pct.tbd{ color:var(--muted); font-weight:400; font-style:italic; font-size:11.5px; }
+
+  /* Profile tab */
+  .profile-empty{
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    padding:38px 10px 10px; color:var(--muted);
+  }
+  .profile-avatar{
+    width:60px; height:60px; border-radius:50%; background:var(--sage);
+    border:2px solid var(--forest-mid); color:var(--forest);
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px; font-weight:700; margin-bottom:14px;
+  }
+  .profile-field{
+    width:100%; border:1px dashed #c9d6cb; border-radius:10px;
+    padding:11px 14px; font-size:13px; color:var(--muted);
+    margin-bottom:10px; text-align:left;
+  }
+  .profile-tbd{
+    margin-top:18px; display:flex; align-items:center; gap:8px;
+    font-size:12px; color:var(--muted);
+  }
+  .profile-tbd .q{
+    width:20px; height:20px; border-radius:50%; border:1.5px solid #c9d6cb;
+    display:flex; align-items:center; justify-content:center; font-weight:700; flex:none;
+  }
 
   .tabbar{
     display:flex; justify-content:space-around; padding:10px 6px;
     border-top:1px solid #eef1ee; background:var(--white);
   }
-  .tabbar-item{ text-align:center; font-size:10px; color:var(--muted); }
+  .tabbar-item{ text-align:center; font-size:10px; color:var(--muted); cursor:pointer; border:none; background:none; font-family:inherit; }
   .tabbar-item.active{ color:var(--forest); font-weight:700; }
   .tabbar-icon{ width:20px; height:20px; border-radius:6px; background:#e6ece7; margin:0 auto 3px; }
   .tabbar-item.active .tabbar-icon{ background:var(--forest); }
@@ -226,7 +319,7 @@
   <div class="view active" id="view-consumer">
     <div class="view-header">
       <h1>Plan your visit before you leave home</h1>
-      <p>Live zone density, a Green Time discount for off-peak visits, and a trip plan built around when things are actually free.</p>
+      <p>Live zone density with an in-mall map, a Green Time discount for off-peak visits, and a trip plan built around when things are actually free — now split across four tabs, matching the latest wireframe.</p>
     </div>
 
     <div class="consumer-wrap">
@@ -237,75 +330,164 @@
             <div class="greet">Good afternoon</div>
             <div class="mall">Siam Central — Today</div>
           </div>
+
           <div class="phone-body">
-            <div class="section-label">Zone density now</div>
 
-            <div class="zone-row" onclick="pulse(this)">
-              <div class="zone-left">
-                <span class="dot high"></span>
-                <div><div class="zone-name">Food Court</div><div class="zone-meta">18–22 min wait</div></div>
+            <!-- 1) EXPLORE -->
+            <div class="phone-view active" id="pv-explore">
+              <div class="section-label">Zone density now</div>
+
+              <div class="zone-row" onclick="pulse(this)">
+                <div class="zone-left">
+                  <span class="dot high"></span>
+                  <div>
+                    <div class="zone-name-row"><span class="zone-name">Food Court</span><span class="floor-chip">3F</span></div>
+                    <div class="zone-meta">18–22 min wait</div>
+                  </div>
+                </div>
+                <div class="zone-level high">Busy</div>
               </div>
-              <div class="zone-level high">Busy</div>
-            </div>
 
-            <div class="zone-row" onclick="pulse(this)">
-              <div class="zone-left">
-                <span class="dot mid"></span>
-                <div><div class="zone-name">Cinema Lobby</div><div class="zone-meta">Filling up by 19:00</div></div>
+              <div class="zone-row" onclick="pulse(this)">
+                <div class="zone-left">
+                  <span class="dot mid"></span>
+                  <div>
+                    <div class="zone-name-row"><span class="zone-name">Cinema Lobby</span><span class="floor-chip">4F</span></div>
+                    <div class="zone-meta">Filling up by 19:00</div>
+                  </div>
+                </div>
+                <div class="zone-level mid">Moderate</div>
               </div>
-              <div class="zone-level mid">Moderate</div>
-            </div>
 
-            <div class="zone-row" onclick="pulse(this)">
-              <div class="zone-left">
-                <span class="dot low"></span>
-                <div><div class="zone-name">Parking B2</div><div class="zone-meta">120 spaces open</div></div>
+              <div class="section-label">Department store map</div>
+              <div class="floor-tabs">
+                <button class="floor-pill" data-floor="4F" onclick="showFloor(this,'4F')">4F</button>
+                <button class="floor-pill active" data-floor="3F" onclick="showFloor(this,'3F')">3F</button>
+                <button class="floor-pill" data-floor="2F" onclick="showFloor(this,'2F')">2F</button>
+                <button class="floor-pill" data-floor="1F" onclick="showFloor(this,'1F')">1F</button>
               </div>
-              <div class="zone-level low">Quiet</div>
+              <div class="mini-map" id="mini-map">
+                <div class="map-block cinema" id="map-cinema">Cinema</div>
+                <div class="map-block etc" id="map-etc">etc.</div>
+                <div class="map-block food on" id="map-food">Food Court</div>
+              </div>
+              <p class="map-caption" id="map-caption">Showing 3F — tap a floor to jump to that zone.</p>
+
+              <div class="section-label">Parking lot</div>
+              <div class="parking-row" onclick="pulse(this)">
+                <div class="parking-name">Parking B1</div>
+                <div class="parking-badge low">3 Left</div>
+              </div>
+              <div class="parking-row" onclick="pulse(this)">
+                <div class="parking-name">Parking B2</div>
+                <div class="parking-badge mid">20 Left</div>
+              </div>
+              <div class="parking-row" onclick="pulse(this)">
+                <div class="parking-name">Parking B3</div>
+                <div class="parking-badge high">50 Left</div>
+              </div>
             </div>
 
-            <div class="section-label">Green Time Incentive</div>
-            <div class="incentive-card">
-              <span class="badge">15% OFF</span>
-              <div class="title">Visit the food court before 17:00</div>
-              <div class="sub">Beat the rush and save on your bill — auto-applied at checkout.</div>
+            <!-- 2) TRIP -->
+            <div class="phone-view" id="pv-trip">
+              <div class="section-label">Your Smart Trip — Sat, 3:30 PM</div>
+              <div class="trip-step">
+                <div class="trip-time">17:00</div>
+                <div class="trip-what"><span class="name">Early dinner, Food Court</span><span class="note">Green Time discount applies</span></div>
+              </div>
+              <div class="trip-step">
+                <div class="trip-time">18:15</div>
+                <div class="trip-what"><span class="name">Browse, 2nd Floor</span><span class="note">Low density window</span></div>
+              </div>
+              <div class="trip-step">
+                <div class="trip-time">19:00</div>
+                <div class="trip-what">
+                  <span class="name">Movie, Cinema Hall 3</span>
+                  <span class="note"><span class="trip-check">✓</span> Booked — you're set</span>
+                </div>
+              </div>
             </div>
 
-            <div class="section-label">Your Smart Trip — Sat, 3:30 PM</div>
-            <div class="trip-step">
-              <div class="trip-time">17:00</div>
-              <div class="trip-what"><span class="name">Early dinner, Food Court</span><span class="note">Green Time discount applies</span></div>
+            <!-- 3) OFFERS -->
+            <div class="phone-view" id="pv-offers">
+              <div class="section-label">Offers for you</div>
+
+              <div class="offer-card" onclick="pulse(this)">
+                <div class="offer-logo">SS</div>
+                <div class="offer-info">
+                  <div class="name">SushiSushi</div>
+                  <div class="desc">Menu A + B</div>
+                </div>
+                <div class="offer-pct">15% OFF</div>
+              </div>
+              <div class="offer-card" onclick="pulse(this)">
+                <div class="offer-logo">AB</div>
+                <div class="offer-info">
+                  <div class="name">ABC</div>
+                  <div class="desc">Details coming soon</div>
+                </div>
+                <div class="offer-pct tbd">— %</div>
+              </div>
+              <div class="offer-card" onclick="pulse(this)">
+                <div class="offer-logo">CD</div>
+                <div class="offer-info">
+                  <div class="name">CDF</div>
+                  <div class="desc">Details coming soon</div>
+                </div>
+                <div class="offer-pct tbd">— %</div>
+              </div>
+              <div class="offer-card" onclick="pulse(this)">
+                <div class="offer-logo">HI</div>
+                <div class="offer-info">
+                  <div class="name">HIJ</div>
+                  <div class="desc">Details coming soon</div>
+                </div>
+                <div class="offer-pct tbd">— %</div>
+              </div>
+
+              <div class="incentive-card">
+                <span class="badge">15% OFF</span>
+                <div class="title">Visit the food court before 17:00</div>
+                <div class="sub">Beat the rush and save on your bill — auto-applied at checkout.</div>
+              </div>
             </div>
-            <div class="trip-step">
-              <div class="trip-time">18:15</div>
-              <div class="trip-what"><span class="name">Browse, 2nd Floor</span><span class="note">Low density window</span></div>
+
+            <!-- 4) PROFILE -->
+            <div class="phone-view" id="pv-profile">
+              <div class="profile-empty">
+                <div class="profile-avatar">👤</div>
+                <div class="profile-field">Name</div>
+                <div class="profile-tbd"><span class="q">?</span> Profile screen — design TBD</div>
+              </div>
             </div>
-            <div class="trip-step">
-              <div class="trip-time">19:00</div>
-              <div class="trip-what"><span class="name">Movie, Cinema Hall 3</span><span class="note">Book before it fills</span></div>
-            </div>
+
           </div>
+
           <div class="tabbar">
-            <div class="tabbar-item active"><div class="tabbar-icon"></div>Explore</div>
-            <div class="tabbar-item"><div class="tabbar-icon"></div>Trip</div>
-            <div class="tabbar-item"><div class="tabbar-icon"></div>Offers</div>
-            <div class="tabbar-item"><div class="tabbar-icon"></div>Profile</div>
+            <button class="tabbar-item active" data-tab="pv-explore" onclick="switchPhoneTab(this)"><div class="tabbar-icon"></div>Explore</button>
+            <button class="tabbar-item" data-tab="pv-trip" onclick="switchPhoneTab(this)"><div class="tabbar-icon"></div>Trip</button>
+            <button class="tabbar-item" data-tab="pv-offers" onclick="switchPhoneTab(this)"><div class="tabbar-icon"></div>Offers</button>
+            <button class="tabbar-item" data-tab="pv-profile" onclick="switchPhoneTab(this)"><div class="tabbar-icon"></div>Profile</button>
           </div>
         </div>
       </div>
 
       <div class="side-notes">
         <div class="note-card">
-          <h3>Zone density</h3>
-          <p>Pulled from forecasted crowd patterns, live traffic, and queue/reservation data — updates through the day, not just a static forecast.</p>
+          <h3>Explore — zone density + map + parking</h3>
+          <p>Each zone now shows its floor (3F, 4F...) so a busy reading is easy to place on the store map below it. The floor pills (4F–1F) jump the mini-map to that level; Parking B2 moved out of the zone list into its own Parking Lot section alongside B1 and B3.</p>
         </div>
         <div class="note-card">
-          <h3>Green Time Incentive</h3>
-          <p>The core mechanism: a targeted discount that makes it worth arriving off-peak, funded by better tenant margins during quiet hours.</p>
+          <h3>Trip — Smart Trip Builder</h3>
+          <p>The itinerary moved off the Explore screen into its own tab. It sequences the visit around forecasted density, and a completed step (like the booked movie) shows a checkmark instead of just a note.</p>
         </div>
         <div class="note-card">
-          <h3>Smart Trip Builder</h3>
-          <p>Sequences the whole visit around forecasted density, so shoppers don't need to build in buffer time for unpredictable crowds.</p>
+          <h3>Offers — Green Time + tenant deals</h3>
+          <p>Tenant promotions (SushiSushi, ABC, CDF, HIJ) live in their own tab as a scannable list, with the Green Time Incentive card surfaced at the bottom as the featured, mall-wide offer.</p>
+        </div>
+        <div class="note-card">
+          <h3>Profile — placeholder</h3>
+          <p>Left intentionally minimal per the wireframe (avatar + name only) — flagged as not-yet-designed so it doesn't block the rest of the flow for the mentor session.</p>
         </div>
       </div>
     </div>
@@ -399,6 +581,7 @@
 </div>
 
 <script>
+  // Top-level: Consumer App / Mall Dashboard
   const tabs = document.querySelectorAll('.tab-btn');
   const views = document.querySelectorAll('.view');
   tabs.forEach(btn => {
@@ -409,6 +592,32 @@
       document.getElementById('view-' + btn.dataset.view).classList.add('active');
     });
   });
+
+  // Phone-internal tabbar: Explore / Trip / Offers / Profile
+  function switchPhoneTab(btn){
+    document.querySelectorAll('.tabbar-item').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.phone-view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    document.querySelector('.phone-body').scrollTop = 0;
+  }
+
+  // Department store floor selector — highlights the matching zone on the mini-map
+  function showFloor(btn, floor){
+    document.querySelectorAll('.floor-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cinema = document.getElementById('map-cinema');
+    const etc = document.getElementById('map-etc');
+    const food = document.getElementById('map-food');
+    [cinema, etc, food].forEach(b => b.classList.remove('on'));
+
+    const caption = document.getElementById('map-caption');
+    if (floor === '4F'){ cinema.classList.add('on'); caption.textContent = 'Showing 4F — Cinema Lobby.'; }
+    else if (floor === '3F'){ food.classList.add('on'); caption.textContent = 'Showing 3F — Food Court.'; }
+    else { etc.classList.add('on'); caption.textContent = 'Showing ' + floor + ' — Retail zones.'; }
+  }
+
   function pulse(el){
     el.style.transition = 'transform .12s';
     el.style.transform = 'scale(0.98)';
