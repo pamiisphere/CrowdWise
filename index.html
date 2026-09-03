@@ -155,19 +155,40 @@
     cursor:pointer; transition:background .15s, color .15s;
   }
   .floor-pill.active{ background:var(--forest); color:var(--white); border-color:var(--forest); }
-  .mini-map{
-    display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;
+
+  .map-frame{
+    background:var(--white); border:1px solid #dbe6dc; border-radius:14px;
+    padding:8px 6px 4px; margin-bottom:6px;
   }
-  .map-block{
-    border-radius:10px; padding:10px 12px; min-height:52px;
-    display:flex; align-items:flex-end; font-size:11.5px; font-weight:700;
-    color:var(--white); opacity:.55; transition:opacity .15s, transform .15s;
-  }
-  .map-block.on{ opacity:1; }
-  .map-block.cinema{ background:var(--gold); color:var(--forest-dark); }
-  .map-block.etc{ background:#8fbf9f; }
-  .map-block.food{ background:var(--red); grid-column:1 / span 2; }
-  .map-caption{ font-size:11px; color:var(--muted); margin:0 0 14px; }
+  .floor-plan{ display:none; width:100%; height:auto; }
+  .floor-plan.active{ display:block; }
+  .fp-cell{ fill:#eef3ee; stroke:#cddcd0; stroke-width:1.2; transition:fill .15s; }
+  .fp-cell.busy{ fill:#f6ded9; stroke:var(--red); }
+  .fp-cell.mid{ fill:var(--gold-light); stroke:var(--gold); }
+  .fp-label{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:9.5px; font-weight:700; fill:var(--ink); }
+  .fp-label.busy{ fill:var(--red); }
+  .fp-label.mid{ fill:#9C7325; }
+  .fp-meta{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:7.3px; fill:var(--muted); }
+  .fp-esc{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:7.5px; font-weight:700; fill:var(--forest); }
+  .fp-outline{ fill:#fff; stroke:#14261c; stroke-width:3; stroke-linejoin:round; }
+  .fp-secondary{ stroke:#c9d6cb; stroke-width:1; }
+  .fp-secondary.tint-lavender{ fill:#e6dcf3; }
+  .fp-secondary.tint-sage{ fill:#dcead9; }
+  .fp-secondary.tint-sky{ fill:#dbe9f2; }
+  .fp-secondary.tint-cream{ fill:#f5ecd9; }
+  .fp-cell.accent-blue{ fill:#dce8f0; stroke:#9db8c9; }
+  .fp-cell.accent-peach{ fill:#f3e3d3; stroke:#d9b48f; }
+  .fp-unit{ stroke:#c9d6cb; stroke-width:1; }
+  .fp-unit.row-a{ fill:#f6e9d0; }
+  .fp-unit.row-b{ fill:#f6dfe3; }
+  .fp-unit-label{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:6.4px; font-weight:700; fill:var(--ink); }
+  .fp-entrance{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:7px; font-weight:800; fill:var(--forest-dark); }
+  .fp-parking{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:8.5px; font-weight:800; fill:var(--forest-dark); letter-spacing:1.5px; }
+  .fp-info{ fill:#fff; stroke:var(--forest-mid); stroke-width:1.2; }
+  .fp-info-label{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:8px; font-weight:700; fill:var(--forest-mid); }
+  .fp-wc{ fill:#fff; stroke:var(--forest-mid); stroke-width:1; }
+  .fp-wc-label{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:6px; font-weight:700; fill:var(--forest-mid); }
+  .map-caption{ font-size:11px; color:var(--muted); margin:8px 0 0; }
 
   /* Parking lot */
   .parking-row{
@@ -366,12 +387,209 @@
                 <button class="floor-pill" data-floor="2F" onclick="showFloor(this,'2F')">2F</button>
                 <button class="floor-pill" data-floor="1F" onclick="showFloor(this,'1F')">1F</button>
               </div>
-              <div class="mini-map" id="mini-map">
-                <div class="map-block cinema" id="map-cinema">Cinema</div>
-                <div class="map-block etc" id="map-etc">etc.</div>
-                <div class="map-block food on" id="map-food">Food Court</div>
+              <div class="map-frame">
+                <svg class="floor-plan" id="fp-4F" viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
+                  <g transform="rotate(-14 170 120)">
+                    <polygon class="fp-outline" points="70,20 270,10 320,55 300,150 160,190 55,175 15,120"/>
+
+                    <rect class="fp-cell mid" x="185" y="25" width="110" height="55" rx="8"/>
+                    <text class="fp-label mid" x="240" y="50" text-anchor="middle">Cinema Lobby</text>
+                    <text class="fp-meta" x="240" y="63" text-anchor="middle">Filling up by 19:00</text>
+
+                    <rect class="fp-secondary tint-lavender" x="122" y="32" width="55" height="48" rx="6"/>
+                    <text class="fp-label" x="149" y="60" text-anchor="middle">Cinema Halls</text>
+
+                    <rect class="fp-unit row-a" x="175" y="150" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="185" y="169" text-anchor="middle">G1</text>
+                    <rect class="fp-unit row-a" x="197" y="145" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="207" y="164" text-anchor="middle">G2</text>
+                    <rect class="fp-unit row-a" x="219" y="140" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="229" y="159" text-anchor="middle">G3</text>
+                    <rect class="fp-unit row-a" x="241" y="135" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="251" y="154" text-anchor="middle">G4</text>
+                    <rect class="fp-unit row-a" x="263" y="130" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="273" y="149" text-anchor="middle">G5</text>
+                    <rect class="fp-unit row-a" x="285" y="125" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="295" y="144" text-anchor="middle">G6</text>
+
+                    <rect class="fp-unit row-b" x="30" y="75" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="88" text-anchor="middle">G7</text>
+                    <rect class="fp-unit row-b" x="30" y="100" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="113" text-anchor="middle">G8</text>
+                    <rect class="fp-unit row-b" x="30" y="125" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="138" text-anchor="middle">G9</text>
+                    <rect class="fp-unit row-b" x="30" y="150" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="163" text-anchor="middle">G10</text>
+
+                    <rect x="133" y="90" width="34" height="20" rx="4" fill="#fff" stroke="#2D5A45" stroke-width="1.2"/>
+                    <text class="fp-esc" x="150" y="103" text-anchor="middle">⇅ Esc.</text>
+
+                    <rect class="fp-wc" x="55" y="135" width="20" height="14" rx="3"/>
+                    <text class="fp-wc-label" x="65" y="145" text-anchor="middle">WC</text>
+
+                    <circle class="fp-info" cx="95" cy="112" r="8"/>
+                    <text class="fp-info-label" x="95" y="115" text-anchor="middle">i</text>
+
+                    <text class="fp-entrance" x="150" y="12" text-anchor="middle">▸ ENTRANCE</text>
+                    <text class="fp-entrance" x="45" y="170" text-anchor="middle">◂ ENTRANCE</text>
+                    <text class="fp-parking" x="308" y="95" text-anchor="middle" transform="rotate(90 308 95)">PARKING</text>
+                  </g>
+                </svg>
+
+                <svg class="floor-plan active" id="fp-3F" viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
+                  <g transform="rotate(-14 170 120)">
+                    <polygon class="fp-outline" points="70,20 270,10 320,55 300,150 160,190 55,175 15,120"/>
+
+                    <rect class="fp-cell busy" x="185" y="25" width="110" height="55" rx="8"/>
+                    <text class="fp-label busy" x="240" y="50" text-anchor="middle">Food Court</text>
+                    <text class="fp-meta" x="240" y="63" text-anchor="middle">18–22 min wait</text>
+
+                    <rect class="fp-secondary tint-sage" x="122" y="32" width="55" height="48" rx="6"/>
+                    <text class="fp-label" x="149" y="60" text-anchor="middle">Supermarket</text>
+
+                    <rect class="fp-unit row-a" x="175" y="150" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="185" y="169" text-anchor="middle">G1</text>
+                    <rect class="fp-unit row-a" x="197" y="145" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="207" y="164" text-anchor="middle">G2</text>
+                    <rect class="fp-unit row-a" x="219" y="140" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="229" y="159" text-anchor="middle">G3</text>
+                    <rect class="fp-unit row-a" x="241" y="135" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="251" y="154" text-anchor="middle">G4</text>
+                    <rect class="fp-unit row-a" x="263" y="130" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="273" y="149" text-anchor="middle">G5</text>
+                    <rect class="fp-unit row-a" x="285" y="125" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="295" y="144" text-anchor="middle">G6</text>
+
+                    <rect class="fp-unit row-b" x="30" y="75" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="88" text-anchor="middle">G7</text>
+                    <rect class="fp-unit row-b" x="30" y="100" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="113" text-anchor="middle">G8</text>
+                    <rect class="fp-unit row-b" x="30" y="125" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="138" text-anchor="middle">G9</text>
+                    <rect class="fp-unit row-b" x="30" y="150" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="163" text-anchor="middle">G10</text>
+
+                    <rect x="133" y="90" width="34" height="20" rx="4" fill="#fff" stroke="#2D5A45" stroke-width="1.2"/>
+                    <text class="fp-esc" x="150" y="103" text-anchor="middle">⇅ Esc.</text>
+
+                    <rect class="fp-wc" x="55" y="135" width="20" height="14" rx="3"/>
+                    <text class="fp-wc-label" x="65" y="145" text-anchor="middle">WC</text>
+
+                    <circle class="fp-info" cx="95" cy="112" r="8"/>
+                    <text class="fp-info-label" x="95" y="115" text-anchor="middle">i</text>
+
+                    <text class="fp-entrance" x="150" y="12" text-anchor="middle">▸ ENTRANCE</text>
+                    <text class="fp-entrance" x="45" y="170" text-anchor="middle">◂ ENTRANCE</text>
+                    <text class="fp-parking" x="308" y="95" text-anchor="middle" transform="rotate(90 308 95)">PARKING</text>
+                  </g>
+                </svg>
+
+                <svg class="floor-plan" id="fp-2F" viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
+                  <g transform="rotate(-14 170 120)">
+                    <polygon class="fp-outline" points="70,20 270,10 320,55 300,150 160,190 55,175 15,120"/>
+
+                    <rect class="fp-cell accent-blue" x="185" y="25" width="110" height="55" rx="8"/>
+                    <text class="fp-label" x="240" y="50" text-anchor="middle">Electronics</text>
+                    <text class="fp-meta" x="240" y="63" text-anchor="middle">No live density yet</text>
+
+                    <rect class="fp-secondary tint-sky" x="122" y="32" width="55" height="48" rx="6"/>
+                    <text class="fp-label" x="149" y="60" text-anchor="middle">Fashion</text>
+
+                    <rect class="fp-unit row-a" x="175" y="150" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="185" y="169" text-anchor="middle">G1</text>
+                    <rect class="fp-unit row-a" x="197" y="145" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="207" y="164" text-anchor="middle">G2</text>
+                    <rect class="fp-unit row-a" x="219" y="140" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="229" y="159" text-anchor="middle">G3</text>
+                    <rect class="fp-unit row-a" x="241" y="135" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="251" y="154" text-anchor="middle">G4</text>
+                    <rect class="fp-unit row-a" x="263" y="130" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="273" y="149" text-anchor="middle">G5</text>
+                    <rect class="fp-unit row-a" x="285" y="125" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="295" y="144" text-anchor="middle">G6</text>
+
+                    <rect class="fp-unit row-b" x="30" y="75" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="88" text-anchor="middle">G7</text>
+                    <rect class="fp-unit row-b" x="30" y="100" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="113" text-anchor="middle">G8</text>
+                    <rect class="fp-unit row-b" x="30" y="125" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="138" text-anchor="middle">G9</text>
+                    <rect class="fp-unit row-b" x="30" y="150" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="163" text-anchor="middle">G10</text>
+
+                    <rect x="133" y="90" width="34" height="20" rx="4" fill="#fff" stroke="#2D5A45" stroke-width="1.2"/>
+                    <text class="fp-esc" x="150" y="103" text-anchor="middle">⇅ Esc.</text>
+
+                    <rect class="fp-wc" x="55" y="135" width="20" height="14" rx="3"/>
+                    <text class="fp-wc-label" x="65" y="145" text-anchor="middle">WC</text>
+
+                    <circle class="fp-info" cx="95" cy="112" r="8"/>
+                    <text class="fp-info-label" x="95" y="115" text-anchor="middle">i</text>
+
+                    <text class="fp-entrance" x="150" y="12" text-anchor="middle">▸ ENTRANCE</text>
+                    <text class="fp-entrance" x="45" y="170" text-anchor="middle">◂ ENTRANCE</text>
+                    <text class="fp-parking" x="308" y="95" text-anchor="middle" transform="rotate(90 308 95)">PARKING</text>
+                  </g>
+                </svg>
+
+                <svg class="floor-plan" id="fp-1F" viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
+                  <g transform="rotate(-14 170 120)">
+                    <polygon class="fp-outline" points="70,20 270,10 320,55 300,150 160,190 55,175 15,120"/>
+
+                    <rect class="fp-cell accent-peach" x="185" y="25" width="110" height="55" rx="8"/>
+                    <text class="fp-label" x="240" y="50" text-anchor="middle">Anchor Store</text>
+                    <text class="fp-meta" x="240" y="63" text-anchor="middle">Ground floor</text>
+
+                    <rect class="fp-secondary tint-cream" x="122" y="32" width="55" height="48" rx="6"/>
+                    <text class="fp-label" x="149" y="60" text-anchor="middle">Info Counter</text>
+
+                    <rect class="fp-unit row-a" x="175" y="150" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="185" y="169" text-anchor="middle">G1</text>
+                    <rect class="fp-unit row-a" x="197" y="145" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="207" y="164" text-anchor="middle">G2</text>
+                    <rect class="fp-unit row-a" x="219" y="140" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="229" y="159" text-anchor="middle">G3</text>
+                    <rect class="fp-unit row-a" x="241" y="135" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="251" y="154" text-anchor="middle">G4</text>
+                    <rect class="fp-unit row-a" x="263" y="130" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="273" y="149" text-anchor="middle">G5</text>
+                    <rect class="fp-unit row-a" x="285" y="125" width="20" height="34" rx="3"/>
+                    <text class="fp-unit-label" x="295" y="144" text-anchor="middle">Taxi</text>
+
+                    <rect class="fp-unit row-b" x="30" y="75" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="88" text-anchor="middle">G7</text>
+                    <rect class="fp-unit row-b" x="30" y="100" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="113" text-anchor="middle">G8</text>
+                    <rect class="fp-unit row-b" x="30" y="125" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="138" text-anchor="middle">G9</text>
+                    <rect class="fp-unit row-b" x="30" y="150" width="34" height="20" rx="3"/>
+                    <text class="fp-unit-label" x="47" y="163" text-anchor="middle">G10</text>
+
+                    <rect x="133" y="90" width="34" height="20" rx="4" fill="#fff" stroke="#2D5A45" stroke-width="1.2"/>
+                    <text class="fp-esc" x="150" y="103" text-anchor="middle">⇅ Esc.</text>
+
+                    <rect class="fp-wc" x="55" y="135" width="20" height="14" rx="3"/>
+                    <text class="fp-wc-label" x="65" y="145" text-anchor="middle">WC</text>
+
+                    <circle class="fp-info" cx="95" cy="112" r="8"/>
+                    <text class="fp-info-label" x="95" y="115" text-anchor="middle">i</text>
+
+                    <text class="fp-entrance" x="150" y="12" text-anchor="middle">▸ ENTRANCE</text>
+                    <text class="fp-entrance" x="65" y="170" text-anchor="middle">◂ ENTRANCE</text>
+                    <text class="fp-parking" x="308" y="95" text-anchor="middle" transform="rotate(90 308 95)">PARKING</text>
+
+                    <circle cx="95" cy="150" r="4" fill="#1B4332"/>
+                    <circle cx="95" cy="150" r="8" fill="none" stroke="#1B4332" stroke-width="1.2" opacity="0.5"/>
+                    <text class="fp-meta" x="95" y="165" text-anchor="middle">You are here</text>
+                  </g>
+                </svg>
               </div>
-              <p class="map-caption" id="map-caption">Showing 3F — tap a floor to jump to that zone.</p>
+              <p class="map-caption" id="map-caption">Showing 3F — Food Court is busy right now.</p>
+              <div class="legend">
+                <span><i style="background:var(--red)"></i>Busy</span>
+                <span><i style="background:var(--gold)"></i>Moderate</span>
+                <span><i style="background:#cddcd0"></i>No live data</span>
+              </div>
 
               <div class="section-label">Parking lot</div>
               <div class="parking-row" onclick="pulse(this)">
@@ -475,7 +693,7 @@
       <div class="side-notes">
         <div class="note-card">
           <h3>Explore — zone density + map + parking</h3>
-          <p>Each zone now shows its floor (3F, 4F...) so a busy reading is easy to place on the store map below it. The floor pills (4F–1F) jump the mini-map to that level; Parking B2 moved out of the zone list into its own Parking Lot section alongside B1 and B3.</p>
+          <p>Each zone now shows its floor (3F, 4F...) so a busy reading is easy to place on the department store map below it — a real floor-plan layout with rooms, an escalator core, and a "you are here" marker on 1F, not just colored blocks. The floor pills jump between levels; Parking B2 moved out of the zone list into its own Parking Lot section alongside B1 and B3.</p>
         </div>
         <div class="note-card">
           <h3>Trip — Smart Trip Builder</h3>
@@ -602,20 +820,21 @@
     document.querySelector('.phone-body').scrollTop = 0;
   }
 
-  // Department store floor selector — highlights the matching zone on the mini-map
+  // Department store floor selector — swaps in that floor's map
+  const FLOOR_CAPTIONS = {
+    '4F': 'Showing 4F — Cinema Lobby is filling up.',
+    '3F': 'Showing 3F — Food Court is busy right now.',
+    '2F': 'Showing 2F — retail floor, no live density yet.',
+    '1F': 'Showing 1F — main entrance & pickup.'
+  };
   function showFloor(btn, floor){
     document.querySelectorAll('.floor-pill').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
 
-    const cinema = document.getElementById('map-cinema');
-    const etc = document.getElementById('map-etc');
-    const food = document.getElementById('map-food');
-    [cinema, etc, food].forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.floor-plan').forEach(svg => svg.classList.remove('active'));
+    document.getElementById('fp-' + floor).classList.add('active');
 
-    const caption = document.getElementById('map-caption');
-    if (floor === '4F'){ cinema.classList.add('on'); caption.textContent = 'Showing 4F — Cinema Lobby.'; }
-    else if (floor === '3F'){ food.classList.add('on'); caption.textContent = 'Showing 3F — Food Court.'; }
-    else { etc.classList.add('on'); caption.textContent = 'Showing ' + floor + ' — Retail zones.'; }
+    document.getElementById('map-caption').textContent = FLOOR_CAPTIONS[floor];
   }
 
   function pulse(el){
