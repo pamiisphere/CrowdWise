@@ -3,352 +3,271 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CrowdWise — Demo</title>
+<title>CrowdWise for THE MALL — Demo</title>
 <style>
   :root{
-    --forest:#1B4332;
-    --forest-dark:#0F2A1E;
-    --forest-mid:#2D5A45;
-    --sage:#E8F0E6;
-    --gold:#D4A24E;
-    --gold-light:#FCF0DB;
-    --ink:#1C1C1C;
-    --muted:#6B7A72;
-    --card:#F4F7F3;
-    --white:#fff;
-    --red:#C24A3B;
+    --forest:#1B4332; --forest-dark:#0F2A1E; --forest-mid:#2D5A45;
+    --sage:#E8F0E6; --gold:#D4A24E; --gold-light:#FCF0DB;
+    --ink:#1C1C1C; --muted:#5F6E66; --card:#F4F7F3; --line:#dbe6dc; --white:#fff;
+    /* density scale — every zone gets one of these */
+    --d1:#3E9B5F; --d1-bg:#DDF0E2;
+    --d2:#C99A1E; --d2-bg:#FBF0CF;
+    --d3:#E07B39; --d3-bg:#FBE2D0;
+    --d4:#C9443A; --d4-bg:#F7D6D2;
+    --nodata:#c9d3cc;
+    --lock:#6A5ACD;
   }
   *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Calibri,Arial,sans-serif;
-    background:var(--sage);
-    color:var(--ink);
-  }
+  body{ margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai",Calibri,Arial,sans-serif; background:var(--sage); color:var(--ink); }
   h1,h2,h3,.serif{ font-family:Cambria,Georgia,"Times New Roman",serif; }
+  button{ font-family:inherit; }
+  button:focus-visible, input:focus-visible, select:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+  .hidden{ display:none !important; }
 
-  /* Top nav */
-  .topbar{
-    background:var(--forest-dark);
-    color:var(--white);
-    padding:18px 32px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-  }
+  /* ===== Top bar ===== */
+  .topbar{ background:var(--forest-dark); color:#fff; padding:14px 28px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
   .brand{ display:flex; align-items:center; gap:10px; }
-  .brand-mark{
-    width:34px;height:34px;border-radius:9px;
-    background:var(--gold);
-    display:flex;align-items:center;justify-content:center;
-    font-weight:700;color:var(--forest-dark); font-size:16px;
-  }
-  .brand-name{ font-size:19px; font-weight:700; letter-spacing:.2px; }
-  .tabs{ display:flex; gap:6px; background:rgba(255,255,255,.08); padding:4px; border-radius:10px; }
-  .tab-btn{
-    border:none; background:transparent; color:#cfe0d3; padding:8px 18px;
-    border-radius:8px; font-size:14px; cursor:pointer; font-weight:600;
-    transition:background .15s, color .15s;
-  }
-  .tab-btn.active{ background:var(--gold); color:var(--forest-dark); }
-  .tag{
-    font-size:12px; color:#a9c2af; border:1px solid rgba(255,255,255,.2);
-    padding:4px 10px; border-radius:20px;
-  }
+  .brand-mark{ width:34px;height:34px;border-radius:9px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--forest-dark); }
+  .brand-name{ font-size:18px; font-weight:700; }
+  .brand-sub{ font-size:12px; color:#a9c2af; }
+  .session{ display:flex; align-items:center; gap:10px; font-size:13px; }
+  .role-chip{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); padding:5px 12px; border-radius:20px; display:flex; align-items:center; gap:7px; }
+  .role-chip i{ width:8px; height:8px; border-radius:50%; background:var(--gold); }
+  .btn-ghost{ border:1px solid rgba(255,255,255,.35); background:transparent; color:#fff; padding:6px 13px; border-radius:8px; font-size:13px; cursor:pointer; }
+  .btn-ghost:hover{ background:rgba(255,255,255,.1); }
+  .demo-tag{ font-size:11.5px; color:#a9c2af; border:1px solid rgba(255,255,255,.2); padding:3px 9px; border-radius:20px; }
 
-  .stage{ padding:40px 32px 70px; max-width:1280px; margin:0 auto; }
-  .view{ display:none; }
-  .view.active{ display:block; }
+  /* Access scope ribbon — shows what the signed-in role can and can't see */
+  .scope{ background:#fff; border-bottom:1px solid var(--line); padding:10px 28px; font-size:13px; display:flex; gap:22px; flex-wrap:wrap; align-items:center; }
+  .scope b{ color:var(--forest-dark); }
+  .scope .can{ color:#2f7a48; } .scope .cannot{ color:var(--d4); }
 
-  .view-header{ margin-bottom:28px; }
+  .stage{ padding:34px 28px 64px; max-width:1280px; margin:0 auto; }
+  .view-header{ margin-bottom:24px; }
   .view-header h1{ font-size:26px; margin:0 0 6px; color:var(--forest-dark); }
-  .view-header p{ margin:0; color:var(--muted); font-size:14.5px; max-width:640px; }
+  .view-header p{ margin:0; color:var(--muted); font-size:14.5px; max-width:680px; line-height:1.5; }
 
-  /* ===== Consumer app view: phone mock + side notes ===== */
-  .consumer-wrap{ display:flex; gap:48px; align-items:flex-start; flex-wrap:wrap; }
-  .phone{
-    width:100%;
-    max-width:340px;
-    flex:0 1 340px;
-    background:var(--forest-dark);
-    border-radius:34px;
-    padding:14px;
-    box-shadow:0 30px 60px -20px rgba(15,42,30,.5);
-  }
-  .phone-screen{
-    background:var(--white);
-    border-radius:22px;
-    overflow:hidden;
-    aspect-ratio:9/19.5;
-    display:flex;
-    flex-direction:column;
-  }
-  .phone-status{ display:flex; justify-content:space-between; padding:10px 18px 0; font-size:12px; color:var(--muted); }
-  .phone-app-header{
-    padding:14px 18px 16px;
-    background:var(--forest);
-    color:var(--white);
-  }
-  .phone-app-header .greet{ font-size:12px; color:#bcd6c4; margin-bottom:2px; }
-  .phone-app-header .mall{ font-size:19px; font-weight:700; font-family:Cambria,serif; }
-  .phone-body{ padding:16px; flex:1; overflow-y:auto; min-height:0; }
-  .phone-view{ display:none; }
-  .phone-view.active{ display:block; }
+  /* ===== Login ===== */
+  .login-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:8px; }
+  .role-card{ background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:20px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:8px; transition:border-color .15s, transform .15s; }
+  .role-card:hover{ border-color:var(--forest-mid); transform:translateY(-2px); }
+  .role-card .ico{ font-size:26px; }
+  .role-card h3{ margin:0; font-size:17px; color:var(--forest-dark); }
+  .role-card p{ margin:0; font-size:13px; color:var(--muted); line-height:1.45; }
+  .role-card .how{ margin-top:auto; font-size:12px; font-weight:700; color:var(--forest); padding-top:8px; border-top:1px dashed var(--line); }
+  .login-box{ max-width:420px; margin:26px auto 0; background:#fff; border-radius:16px; border:1px solid var(--line); padding:24px; }
+  .login-box h3{ margin:0 0 4px; color:var(--forest-dark); }
+  .login-box p{ margin:0 0 14px; font-size:13px; color:var(--muted); }
+  .field{ display:flex; flex-direction:column; gap:5px; margin-bottom:12px; font-size:12.5px; font-weight:600; color:var(--forest-dark); }
+  .field input, .field select{ padding:10px 12px; border-radius:9px; border:1.5px solid var(--line); font-size:14px; font-family:inherit; }
+  .btn{ border:none; background:var(--forest); color:#fff; padding:11px 16px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; }
+  .btn:hover{ background:var(--forest-mid); }
+  .btn.gold{ background:var(--gold); color:var(--forest-dark); }
+  .btn.light{ background:var(--card); color:var(--forest-dark); border:1px solid var(--line); }
+  .btn.full{ width:100%; }
+  .err{ color:var(--d4); font-size:12.5px; min-height:18px; margin-bottom:6px; }
+  .demo-codes{ margin-top:22px; background:var(--gold-light); border:1px solid #eecf94; border-radius:12px; padding:14px 16px; font-size:13px; }
+  .demo-codes table{ width:100%; border-collapse:collapse; margin-top:6px; }
+  .demo-codes td{ padding:4px 0; }
+  .demo-codes code{ background:#fff; padding:2px 7px; border-radius:6px; font-weight:700; }
 
-  .section-label{ font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin:16px 0 8px; }
-  .section-label:first-child{ margin-top:0; }
+  /* ===== Shopper (phone) ===== */
+  .consumer-wrap{ display:flex; gap:44px; align-items:flex-start; flex-wrap:wrap; }
+  .phone{ width:100%; max-width:360px; flex:0 1 360px; background:var(--forest-dark); border-radius:36px; padding:13px; box-shadow:0 30px 60px -20px rgba(15,42,30,.5); }
+  .phone-screen{ background:#fff; border-radius:24px; overflow:hidden; aspect-ratio:9/19.5; display:flex; flex-direction:column; }
+  .phone-status{ display:flex; justify-content:space-between; padding:9px 18px 0; font-size:11.5px; color:var(--muted); }
+  .host-bar{ display:flex; align-items:center; gap:8px; padding:8px 16px; font-size:11.5px; color:var(--muted); border-bottom:1px solid #eef1ee; }
+  .host-bar .back{ font-weight:700; color:var(--ink); }
+  .host-bar .host{ margin-left:auto; font-weight:700; letter-spacing:.3px; color:var(--ink); }
+  .phone-head{ padding:12px 16px 14px; background:var(--forest); color:#fff; }
+  .phone-head .greet{ font-size:12px; color:#bcd6c4; }
+  .phone-head .title{ font-size:18px; font-weight:700; font-family:Cambria,serif; }
+  .phone-body{ padding:14px; flex:1; overflow-y:auto; min-height:0; }
+  .pv{ display:none; } .pv.active{ display:block; }
+  .sl{ font-size:12px; font-weight:700; color:var(--muted); margin:16px 0 8px; }
+  .sl:first-child{ margin-top:0; }
 
-  .zone-row{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:11px 12px; border-radius:12px; background:var(--card);
-    margin-bottom:8px; cursor:pointer; border:1px solid transparent;
-    transition:border-color .15s, background .15s;
-  }
-  .zone-row:hover{ border-color:var(--forest-mid); }
-  .zone-left{ display:flex; align-items:center; gap:10px; }
-  .dot{ width:9px; height:9px; border-radius:50%; flex:none; }
-  .dot.low{ background:#4E9A64; }
-  .dot.mid{ background:var(--gold); }
-  .dot.high{ background:var(--red); }
-  .zone-name-row{ display:flex; align-items:center; gap:6px; }
-  .zone-name{ font-size:13.5px; font-weight:600; }
-  .floor-chip{
-    font-size:10px; font-weight:700; color:var(--forest);
-    background:var(--sage); border:1px solid #cfe0d3;
-    padding:1px 6px; border-radius:6px;
-  }
-  .zone-meta{ font-size:11.5px; color:var(--muted); }
-  .zone-level{ font-size:11.5px; font-weight:700; }
-  .zone-level.low{ color:#3C7A4E; }
-  .zone-level.mid{ color:#9C7325; }
-  .zone-level.high{ color:var(--red); }
+  .points-card{ border-radius:16px; padding:14px 16px; color:#fff; background:linear-gradient(135deg,#1B4332 0%, #2D5A45 55%, #8a6a2c 100%); position:relative; overflow:hidden; }
+  .points-card .lbl{ font-size:11.5px; color:#d7e6da; }
+  .points-card .pts{ font-size:28px; font-weight:700; font-family:Cambria,serif; line-height:1.1; }
+  .points-card .row{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:8px; font-size:11.5px; color:#e7efe8; }
+  .points-card .mc{ position:absolute; right:14px; top:12px; font-size:11px; font-weight:800; background:rgba(255,255,255,.18); padding:3px 8px; border-radius:6px; }
+  .eco-strip{ display:flex; gap:8px; margin-top:10px; }
+  .eco{ flex:1; background:var(--d1-bg); border-radius:12px; padding:9px 10px; }
+  .eco b{ display:block; font-size:16px; color:#24663b; }
+  .eco span{ font-size:11px; color:#3c6b4c; }
 
-  .incentive-card{
-    background:linear-gradient(135deg, var(--gold-light), #f8e2bd);
-    border-radius:14px; padding:14px; margin-top:4px; margin-bottom:8px;
-    border:1px solid #eecf94;
-  }
-  .incentive-card .badge{
-    display:inline-block; background:var(--gold); color:var(--forest-dark);
-    font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; margin-bottom:8px;
-  }
-  .incentive-card .title{ font-size:14px; font-weight:700; margin-bottom:3px; }
-  .incentive-card .sub{ font-size:12px; color:#7a5a1e; }
+  .now-card{ border-radius:14px; padding:12px; background:var(--card); border:1px solid var(--line); }
+  .now-card .big{ font-size:15px; font-weight:700; }
+  .now-card .sub{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .quick{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .quick button{ border:none; background:var(--card); border-radius:12px; padding:10px 4px; font-size:11px; cursor:pointer; color:var(--ink); }
+  .quick button span{ display:block; font-size:18px; margin-bottom:3px; }
 
-  .trip-step{
-    display:flex; gap:10px; padding:9px 0;
-    border-bottom:1px dashed #dfe8e0;
-  }
+  .zone-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:12px; background:var(--card); margin-bottom:7px; cursor:pointer; border-left:5px solid var(--nodata); width:100%; text-align:left; border-top:none; border-right:none; border-bottom:none; }
+  .zone-row .n{ font-size:13.5px; font-weight:600; }
+  .zone-row .m{ font-size:11.5px; color:var(--muted); }
+  .floor-chip{ font-size:10px; font-weight:700; color:var(--forest); background:var(--sage); padding:1px 6px; border-radius:6px; margin-left:5px; }
+  .lvl{ font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .l1{ border-left-color:var(--d1); } .lvl.l1{ background:var(--d1-bg); color:#24663b; }
+  .l2{ border-left-color:var(--d2); } .lvl.l2{ background:var(--d2-bg); color:#7d5f0e; }
+  .l3{ border-left-color:var(--d3); } .lvl.l3{ background:var(--d3-bg); color:#9a4c1a; }
+  .l4{ border-left-color:var(--d4); } .lvl.l4{ background:var(--d4-bg); color:#9b2c24; }
+
+  .floor-tabs{ display:flex; gap:6px; margin-bottom:10px; }
+  .floor-pill{ flex:1; border:1.5px solid var(--forest-mid); background:#fff; color:var(--forest-mid); font-size:12px; font-weight:700; padding:6px 0; border-radius:20px; cursor:pointer; }
+  .floor-pill.active{ background:var(--forest); color:#fff; border-color:var(--forest); }
+  .map-frame{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:6px; }
+  .map-frame svg{ width:100%; height:auto; display:block; }
+  .zrect{ cursor:pointer; stroke-width:1.5; transition:opacity .15s; }
+  .zrect:hover{ opacity:.8; }
+  .zrect.sel{ stroke-width:3; }
+  .ztext{ font-size:12px; font-weight:700; pointer-events:none; }
+  .zsub{ font-size:9.5px; pointer-events:none; fill:#4a564f; }
+  .legend{ display:flex; gap:10px; flex-wrap:wrap; margin-top:9px; font-size:11px; color:var(--muted); }
+  .legend span{ display:inline-flex; align-items:center; gap:4px; }
+  .legend i{ width:10px; height:10px; border-radius:3px; display:inline-block; }
+  .zone-sheet{ margin-top:10px; padding:12px; border-radius:12px; border:1.5px solid var(--line); background:#fff; }
+  .zone-sheet .t{ font-weight:700; font-size:14px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .zone-sheet .d{ font-size:12px; color:var(--muted); margin-top:4px; line-height:1.45; }
+
+  .parking-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:12px; background:var(--card); margin-bottom:7px; border-left:5px solid; }
+
+  .trip-step{ display:flex; gap:10px; padding:10px 0; border-bottom:1px dashed #dfe8e0; }
   .trip-step:last-child{ border-bottom:none; }
-  .trip-time{ font-size:12.5px; font-weight:700; color:var(--forest); width:54px; flex:none; }
+  .trip-time{ font-size:12.5px; font-weight:700; color:var(--forest); width:50px; flex:none; }
   .trip-what{ font-size:13px; flex:1; }
-  .trip-what .name{ font-weight:600; }
-  .trip-what .note{ display:flex; align-items:center; gap:5px; font-size:11.5px; color:var(--muted); margin-top:1px; }
-  .trip-check{
-    width:16px; height:16px; border-radius:50%; background:#4E9A64; color:var(--white);
-    display:inline-flex; align-items:center; justify-content:center; font-size:10px; flex:none;
-  }
+  .trip-what .name{ font-weight:600; display:block; }
+  .trip-what .note{ font-size:11.5px; color:var(--muted); }
+  .earn{ display:inline-block; font-size:10.5px; font-weight:700; color:#24663b; background:var(--d1-bg); padding:1px 7px; border-radius:10px; margin-top:3px; }
 
-  /* Department store mini-map */
-  .floor-tabs{ display:flex; gap:6px; margin-bottom:12px; }
-  .floor-pill{
-    border:1px solid var(--forest-mid); background:var(--white); color:var(--forest-mid);
-    font-size:11.5px; font-weight:700; padding:5px 13px; border-radius:20px;
-    cursor:pointer; transition:background .15s, color .15s;
-  }
-  .floor-pill.active{ background:var(--forest); color:var(--white); border-color:var(--forest); }
-
-  .map-frame{
-    background:var(--white); border:1px solid #dbe6dc; border-radius:14px;
-    padding:8px 6px 4px; margin-bottom:6px;
-  }
-  .floor-plan{ display:none; width:100%; height:auto; }
-  .floor-plan.active{ display:block; }
-  .fp-cell{ fill:#eef3ee; stroke:#cddcd0; stroke-width:1.2; transition:fill .15s; }
-  .fp-cell.busy{ fill:#f6ded9; stroke:var(--red); }
-  .fp-cell.mid{ fill:var(--gold-light); stroke:var(--gold); }
-  .fp-label{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:9.5px; font-weight:700; fill:var(--ink); }
-  .fp-label.busy{ fill:var(--red); }
-  .fp-label.mid{ fill:#9C7325; }
-  .fp-meta{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:7.3px; fill:var(--muted); }
-  .fp-esc{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:7.5px; font-weight:700; fill:var(--forest); }
-  .fp-outline{ fill:#fff; stroke:#14261c; stroke-width:3; stroke-linejoin:round; }
-  .fp-secondary{ stroke:#c9d6cb; stroke-width:1; }
-  .fp-secondary.tint-lavender{ fill:#e6dcf3; }
-  .fp-secondary.tint-sage{ fill:#dcead9; }
-  .fp-secondary.tint-sky{ fill:#dbe9f2; }
-  .fp-secondary.tint-cream{ fill:#f5ecd9; }
-  .fp-cell.accent-blue{ fill:#dce8f0; stroke:#9db8c9; }
-  .fp-cell.accent-peach{ fill:#f3e3d3; stroke:#d9b48f; }
-  .fp-unit{ stroke:#c9d6cb; stroke-width:1; }
-  .fp-unit.row-a{ fill:#f6e9d0; }
-  .fp-unit.row-b{ fill:#f6dfe3; }
-  .fp-unit-label{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:6.4px; font-weight:700; fill:var(--ink); }
-  .fp-entrance{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:7px; font-weight:800; fill:var(--forest-dark); }
-  .fp-parking{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:8.5px; font-weight:800; fill:var(--forest-dark); letter-spacing:1.5px; }
-  .fp-info{ fill:#fff; stroke:var(--forest-mid); stroke-width:1.2; }
-  .fp-info-label{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:8px; font-weight:700; fill:var(--forest-mid); }
-  .fp-wc{ fill:#fff; stroke:var(--forest-mid); stroke-width:1; }
-  .fp-wc-label{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:6px; font-weight:700; fill:var(--forest-mid); }
-  .map-caption{ font-size:11px; color:var(--muted); margin:8px 0 0; }
-
-  /* Parking lot */
-  .parking-row{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:11px 12px; border-radius:12px; background:var(--card);
-    margin-bottom:8px; cursor:pointer; border:1px solid transparent;
-    transition:border-color .15s;
-  }
-  .parking-row:hover{ border-color:var(--forest-mid); }
-  .parking-name{ font-size:13.5px; font-weight:600; }
-  .parking-badge{ font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:20px; }
-  .parking-badge.low{ background:#fbe4e0; color:var(--red); }
-  .parking-badge.mid{ background:var(--gold-light); color:#9C7325; }
-  .parking-badge.high{ background:#e2f0e5; color:#3C7A4E; }
-
-  /* Offers tab */
-  .offer-card{
-    display:flex; align-items:center; gap:12px; padding:11px 12px;
-    border-radius:12px; background:var(--card); margin-bottom:8px;
-    border:1px solid transparent; cursor:pointer; transition:border-color .15s;
-  }
-  .offer-card:hover{ border-color:var(--forest-mid); }
-  .offer-logo{
-    width:36px; height:36px; border-radius:50%; flex:none;
-    background:var(--white); border:1.5px solid var(--forest-mid);
-    display:flex; align-items:center; justify-content:center;
-    font-size:10.5px; font-weight:700; color:var(--forest);
-  }
+  .offer-card{ display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:12px; background:var(--card); margin-bottom:7px; }
+  .offer-logo{ width:36px; height:36px; border-radius:50%; flex:none; background:#fff; border:1.5px solid var(--forest-mid); display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700; color:var(--forest); }
   .offer-info{ flex:1; min-width:0; }
   .offer-info .name{ font-size:13.5px; font-weight:700; }
   .offer-info .desc{ font-size:11.5px; color:var(--muted); }
-  .offer-pct{ font-size:13px; font-weight:700; color:var(--red); flex:none; }
-  .offer-pct.tbd{ color:var(--muted); font-weight:400; font-style:italic; font-size:11.5px; }
+  .offer-cta{ border:none; background:var(--forest); color:#fff; font-size:11px; font-weight:700; padding:6px 10px; border-radius:8px; cursor:pointer; flex:none; }
+  .offer-cta.done{ background:var(--d1-bg); color:#24663b; }
+  .green-banner{ background:linear-gradient(135deg,var(--gold-light),#f8e2bd); border:1px solid #eecf94; border-radius:14px; padding:12px 14px; }
+  .green-banner .badge{ display:inline-block; background:var(--gold); color:var(--forest-dark); font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; margin-bottom:6px; }
+  .green-banner .title{ font-size:14px; font-weight:700; }
+  .green-banner .sub{ font-size:12px; color:#7a5a1e; margin-top:2px; }
 
-  /* Profile tab */
-  .profile-empty{
-    display:flex; flex-direction:column; align-items:center; text-align:center;
-    padding:38px 10px 10px; color:var(--muted);
-  }
-  .profile-avatar{
-    width:60px; height:60px; border-radius:50%; background:var(--sage);
-    border:2px solid var(--forest-mid); color:var(--forest);
-    display:flex; align-items:center; justify-content:center;
-    font-size:24px; font-weight:700; margin-bottom:14px;
-  }
-  .profile-field{
-    width:100%; border:1px dashed #c9d6cb; border-radius:10px;
-    padding:11px 14px; font-size:13px; color:var(--muted);
-    margin-bottom:10px; text-align:left;
-  }
-  .profile-tbd{
-    margin-top:18px; display:flex; align-items:center; gap:8px;
-    font-size:12px; color:var(--muted);
-  }
-  .profile-tbd .q{
-    width:20px; height:20px; border-radius:50%; border:1.5px solid #c9d6cb;
-    display:flex; align-items:center; justify-content:center; font-weight:700; flex:none;
-  }
+  .linked{ display:flex; gap:10px; align-items:center; padding:12px; border-radius:14px; background:var(--card); }
+  .avatar{ width:46px; height:46px; border-radius:50%; background:var(--forest); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:17px; flex:none; }
+  .linked .n{ font-weight:700; font-size:14px; }
+  .linked .m{ font-size:11.5px; color:var(--muted); }
+  .ok-pill{ font-size:10.5px; font-weight:700; color:#24663b; background:var(--d1-bg); padding:2px 8px; border-radius:10px; }
+  .toggle-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #eef1ee; font-size:12.5px; }
+  .toggle-row small{ display:block; color:var(--muted); font-size:11px; }
+  .switch{ width:38px; height:22px; border-radius:20px; background:#cfd8d2; position:relative; border:none; cursor:pointer; flex:none; }
+  .switch::after{ content:""; position:absolute; width:16px; height:16px; border-radius:50%; background:#fff; top:3px; left:3px; transition:left .15s; }
+  .switch.on{ background:var(--forest); }
+  .switch.on::after{ left:19px; }
+  .privacy-note{ margin-top:12px; font-size:11.5px; color:#4b3f9e; background:#EEEBFB; border-radius:10px; padding:10px; line-height:1.45; }
 
-  .tabbar{
-    display:flex; justify-content:space-around; padding:10px 6px;
-    border-top:1px solid #eef1ee; background:var(--white);
-  }
-  .tabbar-item{ text-align:center; font-size:10px; color:var(--muted); cursor:pointer; border:none; background:none; font-family:inherit; }
-  .tabbar-item.active{ color:var(--forest); font-weight:700; }
-  .tabbar-icon{
-    width:20px; height:20px; border-radius:6px; background:#e6ece7; margin:0 auto 3px;
-    display:flex; align-items:center; justify-content:center; font-size:12px; line-height:1;
-  }
-  .tabbar-item.active .tabbar-icon{ background:var(--forest); }
+  .tabbar{ display:flex; justify-content:space-around; padding:8px 4px 10px; border-top:1px solid #eef1ee; background:#fff; }
+  .tb{ text-align:center; font-size:10px; color:var(--muted); cursor:pointer; border:none; background:none; padding:2px 4px; }
+  .tb .i{ width:30px; height:24px; border-radius:8px; margin:0 auto 2px; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .tb.active{ color:var(--forest); font-weight:700; }
+  .tb.active .i{ background:var(--sage); }
 
-  .side-notes{ flex:1; min-width:280px; padding-top:6px; }
-  .note-card{
-    background:var(--white); border-radius:12px; padding:16px 18px; margin-bottom:14px;
-    border:1px solid #dbe6dc;
-  }
-  .note-card h3{ margin:0 0 6px; font-size:14.5px; color:var(--forest-dark); }
+  .side-notes{ flex:1; min-width:280px; }
+  .note-card{ background:#fff; border-radius:12px; padding:15px 18px; margin-bottom:12px; border:1px solid var(--line); }
+  .note-card h3{ margin:0 0 5px; font-size:14.5px; color:var(--forest-dark); }
   .note-card p{ margin:0; font-size:13px; color:var(--muted); line-height:1.5; }
+  .note-card.pitch{ border-left:4px solid var(--gold); }
 
-  /* ===== Dashboard view ===== */
-  .dash-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
-  .stat-card{
-    background:var(--white); border-radius:14px; padding:18px 20px;
-    border:1px solid #dbe6dc;
-  }
-  .stat-card .label{ font-size:12px; color:var(--muted); margin-bottom:8px; }
-  .stat-card .value{ font-size:28px; font-weight:700; color:var(--forest-dark); font-family:Cambria,serif; }
-  .stat-card .delta{ font-size:12px; margin-top:6px; font-weight:600; }
-  .delta.up{ color:#3C7A4E; }
-  .delta.down{ color:var(--red); }
+  /* ===== Dashboards (shared) ===== */
+  .subtabs{ display:flex; gap:6px; margin-bottom:20px; flex-wrap:wrap; }
+  .subtab{ border:1.5px solid var(--line); background:#fff; color:var(--forest-dark); padding:8px 16px; border-radius:10px; font-size:13.5px; font-weight:700; cursor:pointer; }
+  .subtab.active{ background:var(--forest); color:#fff; border-color:var(--forest); }
+  .subview{ display:none; } .subview.active{ display:block; }
+  .kpis{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+  .kpi{ background:#fff; border-radius:14px; padding:16px 18px; border:1px solid var(--line); }
+  .kpi .label{ font-size:12px; color:var(--muted); margin-bottom:6px; }
+  .kpi .value{ font-size:26px; font-weight:700; color:var(--forest-dark); font-family:Cambria,serif; }
+  .kpi .delta{ font-size:12px; margin-top:4px; font-weight:600; color:#2f7a48; }
+  .kpi.eco{ background:var(--d1-bg); border-color:#bfe0c8; }
+  .grid2{ display:grid; grid-template-columns:1.4fr 1fr; gap:18px; margin-bottom:18px; }
+  .grid2.even{ grid-template-columns:1fr 1fr; }
+  .panel{ background:#fff; border-radius:14px; padding:18px 20px; border:1px solid var(--line); }
+  .panel h3{ margin:0 0 3px; font-size:15.5px; color:var(--forest-dark); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .panel .sub{ font-size:12.5px; color:var(--muted); margin-bottom:14px; }
+  .lock-tag{ font-family:-apple-system,Segoe UI,Arial,sans-serif; font-size:10.5px; font-weight:700; color:#4b3f9e; background:#EEEBFB; padding:2px 8px; border-radius:10px; }
+  .agg-tag{ font-family:-apple-system,Segoe UI,Arial,sans-serif; font-size:10.5px; font-weight:700; color:#7d5f0e; background:var(--d2-bg); padding:2px 8px; border-radius:10px; }
 
-  .dash-main{ display:grid; grid-template-columns:1.5fr 1fr; gap:20px; }
-  .panel{ background:var(--white); border-radius:14px; padding:20px 22px; border:1px solid #dbe6dc; }
-  .panel h3{ margin:0 0 4px; font-size:15px; color:var(--forest-dark); }
-  .panel .sub{ font-size:12px; color:var(--muted); margin-bottom:16px; }
+  .bars{ display:flex; align-items:flex-end; gap:7px; height:160px; }
+  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:2px; }
+  .bar-pair{ display:flex; gap:2px; align-items:flex-end; width:100%; height:100%; }
+  .bar{ flex:1; border-radius:4px 4px 0 0; }
+  .bar-label{ font-size:10px; color:var(--muted); margin-top:5px; }
 
-  .bars{ display:flex; align-items:flex-end; gap:8px; height:170px; }
-  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
-  .bar{ width:100%; border-radius:5px 5px 0 0; background:var(--forest-mid); position:relative; }
-  .bar.peak{ background:var(--red); opacity:.85; }
-  .bar.offpeak{ background:var(--gold); }
-  .bar-label{ font-size:10px; color:var(--muted); margin-top:6px; }
+  .row{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid #eef1ee; font-size:13px; }
+  .row:last-child{ border-bottom:none; }
+  .row .k{ color:var(--muted); }
+  .row .v{ font-weight:700; color:var(--forest-dark); }
+  .status{ font-size:11px; padding:3px 9px; border-radius:20px; font-weight:700; white-space:nowrap; }
+  .status.bad{ background:var(--d4-bg); color:#9b2c24; }
+  .status.ok{ background:var(--d1-bg); color:#24663b; }
+  .status.warn{ background:var(--d2-bg); color:#7d5f0e; }
+  .status.info{ background:#EEEBFB; color:#4b3f9e; }
 
-  .legend{ display:flex; gap:16px; margin-top:14px; font-size:11.5px; color:var(--muted); }
-  .legend span{ display:inline-flex; align-items:center; gap:5px; }
-  .legend i{ width:9px; height:9px; border-radius:2px; display:inline-block; }
+  .locked{ position:relative; }
+  .locked .blur{ filter:blur(6px); user-select:none; }
+  .locked .lock-over{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; font-size:13px; color:#4b3f9e; font-weight:700; gap:4px; }
+  .locked .lock-over small{ font-weight:400; color:var(--muted); max-width:260px; }
 
-  .tenant-row{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:10px 0; border-bottom:1px solid #eef1ee; font-size:13px;
-  }
-  .tenant-row:last-child{ border-bottom:none; }
-  .tenant-name{ font-weight:600; }
-  .tenant-status{ font-size:11px; padding:3px 9px; border-radius:20px; font-weight:700; }
-  .tenant-status.understaff{ background:#fbe4e0; color:var(--red); }
-  .tenant-status.ok{ background:#e2f0e5; color:#3C7A4E; }
-  .tenant-status.over{ background:var(--gold-light); color:#9C7325; }
+  /* win–win simulator */
+  .sim{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-top:14px; }
+  .sim .box{ border-radius:12px; padding:14px; }
+  .sim .box b{ display:block; font-size:24px; font-family:Cambria,serif; }
+  .sim .box span{ font-size:12px; }
+  .sim .eco{ background:var(--d1-bg); color:#24663b; }
+  .sim .money{ background:var(--gold-light); color:#7a5a1e; }
+  .sim .people{ background:var(--card); color:var(--forest-dark); }
+  input[type=range]{ width:100%; accent-color:var(--forest); }
+  .slider-head{ display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:var(--forest-dark); }
 
-  .esg-row{ display:flex; justify-content:space-between; padding:9px 0; font-size:13px; border-bottom:1px solid #eef1ee; }
-  .esg-row:last-child{ border-bottom:none; }
-  .esg-row .k{ color:var(--muted); }
-  .esg-row .v{ font-weight:700; color:var(--forest-dark); }
+  .heat{ display:grid; grid-template-columns:auto repeat(4,1fr); gap:6px; font-size:12px; }
+  .heat .h{ font-weight:700; color:var(--muted); font-size:11px; text-align:center; }
+  .heat .f{ font-weight:700; color:var(--forest-dark); display:flex; align-items:center; }
+  .heat .c{ border-radius:8px; padding:8px 6px; text-align:center; font-weight:600; font-size:11px; }
 
-  footer.note{
-    text-align:center; color:var(--muted); font-size:12px; padding:24px 0 0;
-  }
+  table.matrix{ width:100%; border-collapse:collapse; font-size:13px; }
+  .matrix th, .matrix td{ padding:10px 8px; border-bottom:1px solid #eef1ee; text-align:center; }
+  .matrix th{ font-size:12px; color:var(--muted); font-weight:700; }
+  .matrix td:first-child, .matrix th:first-child{ text-align:left; }
+  .p-full{ color:#24663b; font-weight:700; }
+  .p-own{ color:#4b3f9e; font-weight:700; }
+  .p-agg{ color:#7d5f0e; font-weight:700; }
+  .p-no{ color:#b9c2bc; font-weight:700; }
+  .table-wrap{ overflow-x:auto; }
 
-  @media (max-width:900px){
-    .dash-main{ grid-template-columns:1fr; }
-    .dash-grid{ grid-template-columns:repeat(2,1fr); }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .preview-offer{ margin-top:6px; }
+  .toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--forest-dark); color:#fff; padding:11px 18px; border-radius:10px; font-size:13.5px; opacity:0; transition:opacity .2s, transform .2s; pointer-events:none; z-index:50; }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  footer.note{ text-align:center; color:var(--muted); font-size:12px; padding:24px 0 0; }
+
+  @media (max-width:980px){
+    .login-grid{ grid-template-columns:repeat(2,1fr); }
+    .grid2, .grid2.even{ grid-template-columns:1fr; }
+    .kpis{ grid-template-columns:repeat(2,1fr); }
     .consumer-wrap{ flex-direction:column; align-items:center; }
-    .side-notes{ min-width:0; width:100%; max-width:500px; }
+    .side-notes{ min-width:0; width:100%; max-width:560px; }
   }
-
-  /* ===== Small screens: phone browser viewing this demo itself ===== */
-  @media (max-width:640px){
-    .stage{ padding:28px 18px 56px; }
-    .view-header h1{ font-size:22px; }
-    .view-header p{ font-size:13.5px; }
-    .consumer-wrap{ gap:28px; }
-  }
-
-  @media (max-width:480px){
-    .topbar{ padding:14px 16px; flex-wrap:wrap; gap:10px 14px; }
-    .brand-name{ font-size:17px; }
-    .tabs{ order:3; width:100%; justify-content:center; }
-    .tag{ font-size:11px; padding:3px 8px; }
+  @media (max-width:560px){
+    .topbar, .scope{ padding-left:14px; padding-right:14px; }
     .stage{ padding:22px 14px 48px; }
-    .view-header h1{ font-size:19px; }
-    .dash-grid{ grid-template-columns:1fr 1fr; gap:10px; }
-    .stat-card{ padding:14px 16px; }
-    .stat-card .value{ font-size:23px; }
-    .panel{ padding:16px 16px; }
+    .login-grid{ grid-template-columns:1fr; }
+    .view-header h1{ font-size:21px; }
+    .sim{ grid-template-columns:1fr; }
+    .form-grid{ grid-template-columns:1fr; }
+    .kpi .value{ font-size:22px; }
   }
-
-  @media (max-width:360px){
-    .dash-grid{ grid-template-columns:1fr; }
-  }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
 </style>
 </head>
 <body>
@@ -356,524 +275,836 @@
 <div class="topbar">
   <div class="brand">
     <div class="brand-mark">CW</div>
-    <div class="brand-name">CrowdWise</div>
+    <div>
+      <div class="brand-name">CrowdWise</div>
+      <div class="brand-sub">A feature inside the THE MALL app</div>
+    </div>
   </div>
-  <div class="tabs">
-    <button class="tab-btn active" data-view="consumer">Consumer App</button>
-    <button class="tab-btn" data-view="dashboard">Mall Dashboard</button>
+  <div class="session">
+    <span class="demo-tag">Demo, sample data</span>
+    <span class="role-chip hidden" id="role-chip"><i></i><span id="role-chip-text"></span></span>
+    <button class="btn-ghost hidden" id="btn-switch" onclick="logout()">Switch role</button>
   </div>
-  <div class="tag">Demo — sample data</div>
 </div>
+
+<div class="scope hidden" id="scope"></div>
 
 <div class="stage">
 
-  <!-- CONSUMER VIEW -->
-  <div class="view active" id="view-consumer">
+  <!-- ================= LOGIN ================= -->
+  <section id="view-login">
+    <div class="view-header">
+      <h1>Who's signing in?</h1>
+      <p>Every group gets its own entrance and only sees the data it needs. Shoppers use their existing THE MALL account; tenants, mall operations and system admins sign in with an access code.</p>
+    </div>
+
+    <div class="login-grid">
+      <button class="role-card" onclick="pickRole('shopper')">
+        <span class="ico">🛍️</span>
+        <h3>Shopper</h3>
+        <p>Crowd levels by zone, a smart trip plan, and M Card points for visiting off-peak.</p>
+        <span class="how">Sign in with THE MALL account</span>
+      </button>
+      <button class="role-card" onclick="pickRole('tenant')">
+        <span class="ico">🏪</span>
+        <h3>Tenant (store)</h3>
+        <p>Your store's traffic forecast, staffing advice and Green Time promotions. Your sales stay yours.</p>
+        <span class="how">Store code: admin or staff</span>
+      </button>
+      <button class="role-card" onclick="pickRole('mall')">
+        <span class="ico">🏬</span>
+        <h3>Mall operations</h3>
+        <p>Mall-wide crowd flow, emission savings and revenue impact. Tenant figures are aggregated by zone.</p>
+        <span class="how">Mall operations code</span>
+      </button>
+      <button class="role-card" onclick="pickRole('admin')">
+        <span class="ico">🛡️</span>
+        <h3>System admin</h3>
+        <p>Accounts, roles, access codes, data permissions and the audit log.</p>
+        <span class="how">System admin code</span>
+      </button>
+    </div>
+
+    <div class="login-box hidden" id="login-shopper">
+      <h3>Continue with THE MALL account</h3>
+      <p>CrowdWise reuses the account and M Card you already have, so there's nothing new to register.</p>
+      <div class="field">Email or phone<input value="nida.s@email.com" /></div>
+      <div class="field">Password<input type="password" value="demo1234" /></div>
+      <button class="btn full" onclick="login('shopper')">Sign in and allow CrowdWise</button>
+      <p style="margin:10px 0 0;font-size:11.5px;">CrowdWise will receive your name, M Card number and points balance. Purchase history is off unless you turn it on.</p>
+    </div>
+
+    <div class="login-box hidden" id="login-code">
+      <h3 id="code-title">Enter access code</h3>
+      <p id="code-sub">Codes are issued by your admin and can be rotated at any time.</p>
+      <div class="field">Access code<input id="code-input" placeholder="e.g. TN-4821" autocomplete="off" /></div>
+      <div class="err" id="code-err"></div>
+      <button class="btn full" onclick="submitCode()">Sign in</button>
+    </div>
+
+    <div class="demo-codes">
+      <b>Demo access codes</b> (for the meeting only)
+      <table>
+        <tr><td>Tenant admin, SushiSushi (store owner)</td><td><code>TN-4821</code></td></tr>
+        <tr><td>Tenant staff, SushiSushi (shift lead)</td><td><code>TS-1190</code></td></tr>
+        <tr><td>Mall operations</td><td><code>MO-7350</code></td></tr>
+        <tr><td>System admin</td><td><code>SA-0001</code></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= SHOPPER ================= -->
+  <section id="view-shopper" class="hidden">
     <div class="view-header">
       <h1>Plan your visit before you leave home</h1>
-      <p>Live zone density with an in-mall map, a Green Time discount for off-peak visits, and a trip plan built around when things are actually free — now split across four tabs, matching the latest wireframe.</p>
+      <p>CrowdWise opens from the THE MALL app. Every zone is colored by how crowded it is, and visiting at quieter times earns M Card points.</p>
     </div>
 
     <div class="consumer-wrap">
       <div class="phone">
         <div class="phone-screen">
-          <div class="phone-status"><span>13:41</span><span>●●●●  Wi-Fi  82%</span></div>
-          <div class="phone-app-header">
-            <div class="greet">Good afternoon</div>
-            <div class="mall">THE MALL — Today</div>
+          <div class="phone-status"><span>13:41</span><span>Wi-Fi 82%</span></div>
+          <div class="host-bar"><span class="back">‹ Home</span><span>CrowdWise</span><span class="host">THE MALL</span></div>
+          <div class="phone-head">
+            <div class="greet">Good afternoon, Khun Nida</div>
+            <div class="title" id="phone-title">The Mall Bangkapi</div>
           </div>
 
-          <div class="phone-body">
+          <div class="phone-body" id="phone-body">
 
-            <!-- 1) EXPLORE -->
-            <div class="phone-view active" id="pv-explore">
-              <div class="section-label">Zone density now</div>
-
-              <div class="zone-row" onclick="pulse(this)">
-                <div class="zone-left">
-                  <span class="dot high"></span>
-                  <div>
-                    <div class="zone-name-row"><span class="zone-name">Food Court</span><span class="floor-chip">3F</span></div>
-                    <div class="zone-meta">18–22 min wait</div>
-                  </div>
-                </div>
-                <div class="zone-level high">Busy</div>
+            <!-- HOME -->
+            <div class="pv active" id="pv-home">
+              <div class="points-card">
+                <span class="mc">M Card</span>
+                <div class="lbl">Points balance</div>
+                <div class="pts" id="pts-balance">2,450</div>
+                <div class="row"><span>+120 Green Points this month</span><span>•••• 4417</span></div>
+              </div>
+              <div class="eco-strip">
+                <div class="eco"><b>2.4 kg</b><span>CO₂ you helped avoid</span></div>
+                <div class="eco"><b>38 min</b><span>Queue time saved</span></div>
               </div>
 
-              <div class="zone-row" onclick="pulse(this)">
-                <div class="zone-left">
-                  <span class="dot mid"></span>
-                  <div>
-                    <div class="zone-name-row"><span class="zone-name">Cinema Lobby</span><span class="floor-chip">4F</span></div>
-                    <div class="zone-meta">Filling up by 19:00</div>
-                  </div>
-                </div>
-                <div class="zone-level mid">Moderate</div>
+              <div class="sl">Right now</div>
+              <div class="now-card">
+                <div class="big">Quiet until 17:00 on most floors</div>
+                <div class="sub">Food Court is crowded. Try 2F cafés or come back after 14:30.</div>
               </div>
 
-              <div class="section-label">Department store map</div>
-              <div class="floor-tabs">
-                <button class="floor-pill" data-floor="4F" onclick="showFloor(this,'4F')">4F</button>
-                <button class="floor-pill active" data-floor="3F" onclick="showFloor(this,'3F')">3F</button>
-                <button class="floor-pill" data-floor="2F" onclick="showFloor(this,'2F')">2F</button>
-                <button class="floor-pill" data-floor="1F" onclick="showFloor(this,'1F')">1F</button>
+              <div class="sl">What do you want to do?</div>
+              <div class="quick">
+                <button onclick="goTab('pv-map')"><span>🗺️</span>Crowd map</button>
+                <button onclick="goTab('pv-trip')"><span>🧭</span>Plan trip</button>
+                <button onclick="goTab('pv-rewards')"><span>🎁</span>Rewards</button>
+                <button onclick="goTab('pv-map');document.getElementById('parking-anchor').scrollIntoView()"><span>🅿️</span>Parking</button>
               </div>
-              <div class="map-frame">
-                <svg class="floor-plan" id="fp-4F" viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
-                  <g transform="rotate(-14 170 120)">
-                    <polygon class="fp-outline" points="70,20 270,10 320,55 300,150 160,190 55,175 15,120"/>
 
-                    <rect class="fp-cell mid" x="185" y="25" width="110" height="55" rx="8"/>
-                    <text class="fp-label mid" x="240" y="50" text-anchor="middle">Cinema Lobby</text>
-                    <text class="fp-meta" x="240" y="63" text-anchor="middle">Filling up by 19:00</text>
+              <div class="sl">Busiest zones</div>
+              <div id="home-zones"></div>
 
-                    <rect class="fp-secondary tint-lavender" x="122" y="32" width="55" height="48" rx="6"/>
-                    <text class="fp-label" x="149" y="60" text-anchor="middle">Cinema Halls</text>
-
-                    <rect class="fp-unit row-a" x="175" y="150" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="185" y="169" text-anchor="middle">G1</text>
-                    <rect class="fp-unit row-a" x="197" y="145" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="207" y="164" text-anchor="middle">G2</text>
-                    <rect class="fp-unit row-a" x="219" y="140" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="229" y="159" text-anchor="middle">G3</text>
-                    <rect class="fp-unit row-a" x="241" y="135" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="251" y="154" text-anchor="middle">G4</text>
-                    <rect class="fp-unit row-a" x="263" y="130" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="273" y="149" text-anchor="middle">G5</text>
-                    <rect class="fp-unit row-a" x="285" y="125" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="295" y="144" text-anchor="middle">G6</text>
-
-                    <rect class="fp-unit row-b" x="30" y="75" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="88" text-anchor="middle">G7</text>
-                    <rect class="fp-unit row-b" x="30" y="100" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="113" text-anchor="middle">G8</text>
-                    <rect class="fp-unit row-b" x="30" y="125" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="138" text-anchor="middle">G9</text>
-                    <rect class="fp-unit row-b" x="30" y="150" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="163" text-anchor="middle">G10</text>
-
-                    <rect x="133" y="90" width="34" height="20" rx="4" fill="#fff" stroke="#2D5A45" stroke-width="1.2"/>
-                    <text class="fp-esc" x="150" y="103" text-anchor="middle">⇅ Esc.</text>
-
-                    <rect class="fp-wc" x="55" y="135" width="20" height="14" rx="3"/>
-                    <text class="fp-wc-label" x="65" y="145" text-anchor="middle">WC</text>
-
-                    <circle class="fp-info" cx="95" cy="112" r="8"/>
-                    <text class="fp-info-label" x="95" y="115" text-anchor="middle">i</text>
-
-                    <text class="fp-entrance" x="150" y="12" text-anchor="middle">▸ ENTRANCE</text>
-                    <text class="fp-entrance" x="45" y="170" text-anchor="middle">◂ ENTRANCE</text>
-                    <text class="fp-parking" x="308" y="95" text-anchor="middle" transform="rotate(90 308 95)">PARKING</text>
-                  </g>
-                </svg>
-
-                <svg class="floor-plan active" id="fp-3F" viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
-                  <g transform="rotate(-14 170 120)">
-                    <polygon class="fp-outline" points="70,20 270,10 320,55 300,150 160,190 55,175 15,120"/>
-
-                    <rect class="fp-cell busy" x="185" y="25" width="110" height="55" rx="8"/>
-                    <text class="fp-label busy" x="240" y="50" text-anchor="middle">Food Court</text>
-                    <text class="fp-meta" x="240" y="63" text-anchor="middle">18–22 min wait</text>
-
-                    <rect class="fp-secondary tint-sage" x="122" y="32" width="55" height="48" rx="6"/>
-                    <text class="fp-label" x="149" y="60" text-anchor="middle">Supermarket</text>
-
-                    <rect class="fp-unit row-a" x="175" y="150" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="185" y="169" text-anchor="middle">G1</text>
-                    <rect class="fp-unit row-a" x="197" y="145" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="207" y="164" text-anchor="middle">G2</text>
-                    <rect class="fp-unit row-a" x="219" y="140" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="229" y="159" text-anchor="middle">G3</text>
-                    <rect class="fp-unit row-a" x="241" y="135" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="251" y="154" text-anchor="middle">G4</text>
-                    <rect class="fp-unit row-a" x="263" y="130" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="273" y="149" text-anchor="middle">G5</text>
-                    <rect class="fp-unit row-a" x="285" y="125" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="295" y="144" text-anchor="middle">G6</text>
-
-                    <rect class="fp-unit row-b" x="30" y="75" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="88" text-anchor="middle">G7</text>
-                    <rect class="fp-unit row-b" x="30" y="100" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="113" text-anchor="middle">G8</text>
-                    <rect class="fp-unit row-b" x="30" y="125" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="138" text-anchor="middle">G9</text>
-                    <rect class="fp-unit row-b" x="30" y="150" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="163" text-anchor="middle">G10</text>
-
-                    <rect x="133" y="90" width="34" height="20" rx="4" fill="#fff" stroke="#2D5A45" stroke-width="1.2"/>
-                    <text class="fp-esc" x="150" y="103" text-anchor="middle">⇅ Esc.</text>
-
-                    <rect class="fp-wc" x="55" y="135" width="20" height="14" rx="3"/>
-                    <text class="fp-wc-label" x="65" y="145" text-anchor="middle">WC</text>
-
-                    <circle class="fp-info" cx="95" cy="112" r="8"/>
-                    <text class="fp-info-label" x="95" y="115" text-anchor="middle">i</text>
-
-                    <text class="fp-entrance" x="150" y="12" text-anchor="middle">▸ ENTRANCE</text>
-                    <text class="fp-entrance" x="45" y="170" text-anchor="middle">◂ ENTRANCE</text>
-                    <text class="fp-parking" x="308" y="95" text-anchor="middle" transform="rotate(90 308 95)">PARKING</text>
-                  </g>
-                </svg>
-
-                <svg class="floor-plan" id="fp-2F" viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
-                  <g transform="rotate(-14 170 120)">
-                    <polygon class="fp-outline" points="70,20 270,10 320,55 300,150 160,190 55,175 15,120"/>
-
-                    <rect class="fp-cell accent-blue" x="185" y="25" width="110" height="55" rx="8"/>
-                    <text class="fp-label" x="240" y="50" text-anchor="middle">Electronics</text>
-                    <text class="fp-meta" x="240" y="63" text-anchor="middle">No live density yet</text>
-
-                    <rect class="fp-secondary tint-sky" x="122" y="32" width="55" height="48" rx="6"/>
-                    <text class="fp-label" x="149" y="60" text-anchor="middle">Fashion</text>
-
-                    <rect class="fp-unit row-a" x="175" y="150" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="185" y="169" text-anchor="middle">G1</text>
-                    <rect class="fp-unit row-a" x="197" y="145" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="207" y="164" text-anchor="middle">G2</text>
-                    <rect class="fp-unit row-a" x="219" y="140" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="229" y="159" text-anchor="middle">G3</text>
-                    <rect class="fp-unit row-a" x="241" y="135" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="251" y="154" text-anchor="middle">G4</text>
-                    <rect class="fp-unit row-a" x="263" y="130" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="273" y="149" text-anchor="middle">G5</text>
-                    <rect class="fp-unit row-a" x="285" y="125" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="295" y="144" text-anchor="middle">G6</text>
-
-                    <rect class="fp-unit row-b" x="30" y="75" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="88" text-anchor="middle">G7</text>
-                    <rect class="fp-unit row-b" x="30" y="100" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="113" text-anchor="middle">G8</text>
-                    <rect class="fp-unit row-b" x="30" y="125" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="138" text-anchor="middle">G9</text>
-                    <rect class="fp-unit row-b" x="30" y="150" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="163" text-anchor="middle">G10</text>
-
-                    <rect x="133" y="90" width="34" height="20" rx="4" fill="#fff" stroke="#2D5A45" stroke-width="1.2"/>
-                    <text class="fp-esc" x="150" y="103" text-anchor="middle">⇅ Esc.</text>
-
-                    <rect class="fp-wc" x="55" y="135" width="20" height="14" rx="3"/>
-                    <text class="fp-wc-label" x="65" y="145" text-anchor="middle">WC</text>
-
-                    <circle class="fp-info" cx="95" cy="112" r="8"/>
-                    <text class="fp-info-label" x="95" y="115" text-anchor="middle">i</text>
-
-                    <text class="fp-entrance" x="150" y="12" text-anchor="middle">▸ ENTRANCE</text>
-                    <text class="fp-entrance" x="45" y="170" text-anchor="middle">◂ ENTRANCE</text>
-                    <text class="fp-parking" x="308" y="95" text-anchor="middle" transform="rotate(90 308 95)">PARKING</text>
-                  </g>
-                </svg>
-
-                <svg class="floor-plan" id="fp-1F" viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg">
-                  <g transform="rotate(-14 170 120)">
-                    <polygon class="fp-outline" points="70,20 270,10 320,55 300,150 160,190 55,175 15,120"/>
-
-                    <rect class="fp-cell accent-peach" x="185" y="25" width="110" height="55" rx="8"/>
-                    <text class="fp-label" x="240" y="50" text-anchor="middle">Anchor Store</text>
-                    <text class="fp-meta" x="240" y="63" text-anchor="middle">Ground floor</text>
-
-                    <rect class="fp-secondary tint-cream" x="122" y="32" width="55" height="48" rx="6"/>
-                    <text class="fp-label" x="149" y="60" text-anchor="middle">Info Counter</text>
-
-                    <rect class="fp-unit row-a" x="175" y="150" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="185" y="169" text-anchor="middle">G1</text>
-                    <rect class="fp-unit row-a" x="197" y="145" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="207" y="164" text-anchor="middle">G2</text>
-                    <rect class="fp-unit row-a" x="219" y="140" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="229" y="159" text-anchor="middle">G3</text>
-                    <rect class="fp-unit row-a" x="241" y="135" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="251" y="154" text-anchor="middle">G4</text>
-                    <rect class="fp-unit row-a" x="263" y="130" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="273" y="149" text-anchor="middle">G5</text>
-                    <rect class="fp-unit row-a" x="285" y="125" width="20" height="34" rx="3"/>
-                    <text class="fp-unit-label" x="295" y="144" text-anchor="middle">Taxi</text>
-
-                    <rect class="fp-unit row-b" x="30" y="75" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="88" text-anchor="middle">G7</text>
-                    <rect class="fp-unit row-b" x="30" y="100" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="113" text-anchor="middle">G8</text>
-                    <rect class="fp-unit row-b" x="30" y="125" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="138" text-anchor="middle">G9</text>
-                    <rect class="fp-unit row-b" x="30" y="150" width="34" height="20" rx="3"/>
-                    <text class="fp-unit-label" x="47" y="163" text-anchor="middle">G10</text>
-
-                    <rect x="133" y="90" width="34" height="20" rx="4" fill="#fff" stroke="#2D5A45" stroke-width="1.2"/>
-                    <text class="fp-esc" x="150" y="103" text-anchor="middle">⇅ Esc.</text>
-
-                    <rect class="fp-wc" x="55" y="135" width="20" height="14" rx="3"/>
-                    <text class="fp-wc-label" x="65" y="145" text-anchor="middle">WC</text>
-
-                    <circle class="fp-info" cx="95" cy="112" r="8"/>
-                    <text class="fp-info-label" x="95" y="115" text-anchor="middle">i</text>
-
-                    <text class="fp-entrance" x="150" y="12" text-anchor="middle">▸ ENTRANCE</text>
-                    <text class="fp-entrance" x="65" y="170" text-anchor="middle">◂ ENTRANCE</text>
-                    <text class="fp-parking" x="308" y="95" text-anchor="middle" transform="rotate(90 308 95)">PARKING</text>
-
-                    <circle cx="95" cy="150" r="4" fill="#1B4332"/>
-                    <circle cx="95" cy="150" r="8" fill="none" stroke="#1B4332" stroke-width="1.2" opacity="0.5"/>
-                    <text class="fp-meta" x="95" y="165" text-anchor="middle">You are here</text>
-                  </g>
-                </svg>
+              <div class="green-banner" style="margin-top:6px">
+                <span class="badge">Green Time</span>
+                <div class="title">Eat before 17:00, get 15% off + 2× points</div>
+                <div class="sub">Fewer people at peak means less cooling energy for the mall.</div>
               </div>
-              <p class="map-caption" id="map-caption">Showing 3F — Food Court is busy right now.</p>
+            </div>
+
+            <!-- MAP -->
+            <div class="pv" id="pv-map">
+              <div class="floor-tabs" id="floor-tabs"></div>
+              <div class="map-frame"><svg id="floor-svg" viewBox="0 0 320 210" role="img" aria-label="Floor map colored by crowd level"></svg></div>
               <div class="legend">
-                <span><i style="background:var(--red)"></i>Busy</span>
-                <span><i style="background:var(--gold)"></i>Moderate</span>
-                <span><i style="background:#cddcd0"></i>No live data</span>
+                <span><i style="background:var(--d1)"></i>Quiet</span>
+                <span><i style="background:var(--d2)"></i>Moderate</span>
+                <span><i style="background:var(--d3)"></i>Busy</span>
+                <span><i style="background:var(--d4)"></i>Crowded</span>
               </div>
+              <div class="zone-sheet" id="zone-sheet"></div>
+              <div class="sl">All zones on this floor</div>
+              <div id="floor-zones"></div>
 
-              <div class="section-label">Parking lot</div>
-              <div class="parking-row" onclick="pulse(this)">
-                <div class="parking-name">Parking B1</div>
-                <div class="parking-badge low">3 Left</div>
-              </div>
-              <div class="parking-row" onclick="pulse(this)">
-                <div class="parking-name">Parking B2</div>
-                <div class="parking-badge mid">20 Left</div>
-              </div>
-              <div class="parking-row" onclick="pulse(this)">
-                <div class="parking-name">Parking B3</div>
-                <div class="parking-badge high">50 Left</div>
-              </div>
+              <div class="sl" id="parking-anchor">Parking</div>
+              <div class="parking-row" style="border-color:var(--d4)"><span class="n" style="font-weight:600;font-size:13.5px">Parking B1</span><span class="lvl l4">3 left</span></div>
+              <div class="parking-row" style="border-color:var(--d2)"><span class="n" style="font-weight:600;font-size:13.5px">Parking B2</span><span class="lvl l2">20 left</span></div>
+              <div class="parking-row" style="border-color:var(--d1)"><span class="n" style="font-weight:600;font-size:13.5px">Parking B3</span><span class="lvl l1">50 left</span></div>
             </div>
 
-            <!-- 2) TRIP -->
-            <div class="phone-view" id="pv-trip">
-              <div class="section-label">Your Smart Trip — Sat, 3:30 PM</div>
-              <div class="trip-step">
-                <div class="trip-time">17:00</div>
-                <div class="trip-what"><span class="name">Early dinner, Food Court</span><span class="note">Green Time discount applies</span></div>
-              </div>
-              <div class="trip-step">
-                <div class="trip-time">18:15</div>
-                <div class="trip-what"><span class="name">Browse, 2nd Floor</span><span class="note">Low density window</span></div>
-              </div>
-              <div class="trip-step">
-                <div class="trip-time">19:00</div>
-                <div class="trip-what">
-                  <span class="name">Movie, Cinema Hall 3</span>
-                  <span class="note"><span class="trip-check">✓</span> Booked — you're set</span>
-                </div>
-              </div>
+            <!-- TRIP -->
+            <div class="pv" id="pv-trip">
+              <div class="sl">Your smart trip, Sat 15:30</div>
+              <div class="trip-step"><div class="trip-time">15:30</div><div class="trip-what"><span class="name">Park at B3</span><span class="note">50 spaces free, closest to 2F escalator</span></div></div>
+              <div class="trip-step"><div class="trip-time">16:00</div><div class="trip-what"><span class="name">Early dinner, Food Court 3F</span><span class="note">Quiet window before the 17:00 rush</span><br><span class="earn">+50 points · 15% off</span></div></div>
+              <div class="trip-step"><div class="trip-time">17:15</div><div class="trip-what"><span class="name">Browse Fashion, 2F</span><span class="note">Moderate, no queues at fitting rooms</span></div></div>
+              <div class="trip-step"><div class="trip-time">19:00</div><div class="trip-what"><span class="name">Movie, Cinema Hall 3</span><span class="note">✓ Booked</span></div></div>
+              <button class="btn full" style="margin-top:12px" onclick="toast('Trip saved. Points are added when you check in at each stop.')">Save this trip</button>
             </div>
 
-            <!-- 3) OFFERS -->
-            <div class="phone-view" id="pv-offers">
-              <div class="section-label">Offers for you</div>
-
-              <div class="offer-card" onclick="pulse(this)">
-                <div class="offer-logo">SS</div>
-                <div class="offer-info">
-                  <div class="name">SushiSushi</div>
-                  <div class="desc">Menu A + B</div>
-                </div>
-                <div class="offer-pct">15% OFF</div>
+            <!-- REWARDS -->
+            <div class="pv" id="pv-rewards">
+              <div class="points-card" style="padding:12px 14px">
+                <span class="mc">M Card</span>
+                <div class="lbl">Points you can use</div>
+                <div class="pts" id="pts-balance-2">2,450</div>
               </div>
-              <div class="offer-card" onclick="pulse(this)">
-                <div class="offer-logo">AB</div>
-                <div class="offer-info">
-                  <div class="name">ABC</div>
-                  <div class="desc">Details coming soon</div>
-                </div>
-                <div class="offer-pct tbd">— %</div>
-              </div>
-              <div class="offer-card" onclick="pulse(this)">
-                <div class="offer-logo">CD</div>
-                <div class="offer-info">
-                  <div class="name">CDF</div>
-                  <div class="desc">Details coming soon</div>
-                </div>
-                <div class="offer-pct tbd">— %</div>
-              </div>
-              <div class="offer-card" onclick="pulse(this)">
-                <div class="offer-logo">HI</div>
-                <div class="offer-info">
-                  <div class="name">HIJ</div>
-                  <div class="desc">Details coming soon</div>
-                </div>
-                <div class="offer-pct tbd">— %</div>
-              </div>
-
-              <div class="incentive-card">
-                <span class="badge">15% OFF</span>
-                <div class="title">Visit the food court before 17:00</div>
-                <div class="sub">Beat the rush and save on your bill — auto-applied at checkout.</div>
-              </div>
+              <div class="sl">Green Time deals (earn 2× points)</div>
+              <div id="offer-list"></div>
+              <div class="sl">Redeem points</div>
+              <div class="offer-card"><div class="offer-logo">🅿️</div><div class="offer-info"><div class="name">1 hour free parking</div><div class="desc">300 points</div></div><button class="offer-cta" onclick="redeem(this,300)">Redeem</button></div>
+              <div class="offer-card"><div class="offer-logo">🎬</div><div class="offer-info"><div class="name">Weekday movie ticket</div><div class="desc">1,200 points</div></div><button class="offer-cta" onclick="redeem(this,1200)">Redeem</button></div>
             </div>
 
-            <!-- 4) PROFILE -->
-            <div class="phone-view" id="pv-profile">
-              <div class="profile-empty">
-                <div class="profile-avatar">👤</div>
-                <div class="profile-field">Name</div>
-                <div class="profile-tbd"><span class="q">?</span> Profile screen — design TBD</div>
+            <!-- PROFILE -->
+            <div class="pv" id="pv-profile">
+              <div class="linked">
+                <div class="avatar">N</div>
+                <div style="flex:1">
+                  <div class="n">Nida Srisuk</div>
+                  <div class="m">M Card Platinum •••• 4417</div>
+                </div>
+                <span class="ok-pill">Linked</span>
               </div>
-            </div>
+              <p style="font-size:11.5px;color:var(--muted);margin:8px 2px 0;">Profile comes from your THE MALL account. Edit it there and it updates here.</p>
 
+              <div class="sl">What you share with CrowdWise</div>
+              <div class="toggle-row"><div>Anonymous location in the mall<small>Used only to count people per zone</small></div><button class="switch on" onclick="this.classList.toggle('on')" aria-label="Toggle location"></button></div>
+              <div class="toggle-row"><div>Points and Green Time history<small>Needed to give you points</small></div><button class="switch on" onclick="this.classList.toggle('on')" aria-label="Toggle points history"></button></div>
+              <div class="toggle-row"><div>Purchase history for better deals<small>Off by default</small></div><button class="switch" onclick="this.classList.toggle('on')" aria-label="Toggle purchase history"></button></div>
+
+              <div class="privacy-note">🔒 Stores never see your name or M Card number. They only see how many people used their deal and when.</div>
+              <button class="btn light full" style="margin-top:12px" onclick="logout()">Sign out</button>
+            </div>
           </div>
 
           <div class="tabbar">
-            <button class="tabbar-item active" data-tab="pv-explore" onclick="switchPhoneTab(this)"><div class="tabbar-icon">🧭</div>Explore</button>
-            <button class="tabbar-item" data-tab="pv-trip" onclick="switchPhoneTab(this)"><div class="tabbar-icon">🧳</div>Trip</button>
-            <button class="tabbar-item" data-tab="pv-offers" onclick="switchPhoneTab(this)"><div class="tabbar-icon">🏷️</div>Offers</button>
-            <button class="tabbar-item" data-tab="pv-profile" onclick="switchPhoneTab(this)"><div class="tabbar-icon">👤</div>Profile</button>
+            <button class="tb active" data-tab="pv-home" onclick="goTab('pv-home')"><div class="i">🏠</div>Home</button>
+            <button class="tb" data-tab="pv-map" onclick="goTab('pv-map')"><div class="i">🗺️</div>Map</button>
+            <button class="tb" data-tab="pv-trip" onclick="goTab('pv-trip')"><div class="i">🧭</div>Trip</button>
+            <button class="tb" data-tab="pv-rewards" onclick="goTab('pv-rewards')"><div class="i">🎁</div>Rewards</button>
+            <button class="tb" data-tab="pv-profile" onclick="goTab('pv-profile')"><div class="i">👤</div>Profile</button>
           </div>
         </div>
       </div>
 
       <div class="side-notes">
-        <div class="note-card">
-          <h3>Explore — zone density + map + parking</h3>
-          <p>Each zone now shows its floor (3F, 4F...) so a busy reading is easy to place on the department store map below it — a real floor-plan layout with rooms, an escalator core, and a "you are here" marker on 1F, not just colored blocks. The floor pills jump between levels; Parking B2 moved out of the zone list into its own Parking Lot section alongside B1 and B3.</p>
+        <div class="note-card pitch">
+          <h3>Lives inside the THE MALL app</h3>
+          <p>No separate download or sign-up. Shoppers open CrowdWise from the THE MALL app, sign in with the same account, and Green Points go straight into their M Card balance, the same way M Card points work today.</p>
         </div>
         <div class="note-card">
-          <h3>Trip — Smart Trip Builder</h3>
-          <p>The itinerary moved off the Explore screen into its own tab. It sequences the visit around forecasted density, and a completed step (like the booked movie) shows a checkmark instead of just a note.</p>
+          <h3>A color for every zone</h3>
+          <p>Every zone on every floor is now colored on a four-step scale, from quiet green to crowded red, on both the map and the zone list. Tap any zone for the wait time and a better time to come.</p>
         </div>
         <div class="note-card">
-          <h3>Offers — Green Time + tenant deals</h3>
-          <p>Tenant promotions (SushiSushi, ABC, CDF, HIJ) live in their own tab as a scannable list, with the Green Time Incentive card surfaced at the bottom as the featured, mall-wide offer.</p>
+          <h3>Simpler to use</h3>
+          <p>Home answers "is it busy right now?" in one line, with four big shortcuts. Five tabs, each with one job: Home, Map, Trip, Rewards, Profile.</p>
         </div>
         <div class="note-card">
-          <h3>Profile — placeholder</h3>
-          <p>Left intentionally minimal per the wireframe (avatar + name only) — flagged as not-yet-designed so it doesn't block the rest of the flow for the mentor session.</p>
+          <h3>Privacy the shopper can see</h3>
+          <p>Profile shows exactly what's shared and lets the shopper switch it off. Stores get counts, never identities.</p>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- DASHBOARD VIEW -->
-  <div class="view" id="view-dashboard">
+  <!-- ================= TENANT ================= -->
+  <section id="view-tenant" class="hidden">
     <div class="view-header">
-      <h1>Mall & tenant operations, at a glance</h1>
-      <p>What management and tenants see: forecasted footfall, staffing signals, and the ESG numbers behind the Green Time Incentive.</p>
+      <h1 id="tenant-title">SushiSushi, 3F Food Court</h1>
+      <p>Your store's forecast, staffing advice and Green Time promotions. Your sales and margins are visible to your store only, not to other tenants or to the mall.</p>
     </div>
 
-    <div class="dash-grid">
-      <div class="stat-card">
-        <div class="label">Off-peak footfall uplift</div>
-        <div class="value">+18%</div>
-        <div class="delta up">▲ vs. last month</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Avg. queue time (peak)</div>
-        <div class="value">12 min</div>
-        <div class="delta up">▼ 6 min saved</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">kWh saved this week</div>
-        <div class="value">3,240</div>
-        <div class="delta up">▲ 9% vs. baseline</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">CO₂e avoided</div>
-        <div class="value">1.4t</div>
-        <div class="delta up">▲ tracking to target</div>
-      </div>
+    <div class="subtabs">
+      <button class="subtab active" data-sv="t-overview" onclick="subTab(this)">Overview</button>
+      <button class="subtab" data-sv="t-promos" onclick="subTab(this)">Green Time promotions</button>
+      <button class="subtab tenant-admin-only" data-sv="t-team" onclick="subTab(this)">Store team &amp; access</button>
     </div>
 
-    <div class="dash-main">
-      <div class="panel">
-        <h3>Forecasted footfall — today</h3>
-        <div class="sub">Zone: Food Court · updates every 15 min</div>
-        <div class="bars">
-          <div class="bar-col"><div class="bar" style="height:28%"></div><div class="bar-label">10a</div></div>
-          <div class="bar-col"><div class="bar" style="height:38%"></div><div class="bar-label">11a</div></div>
-          <div class="bar-col"><div class="bar" style="height:52%"></div><div class="bar-label">12p</div></div>
-          <div class="bar-col"><div class="bar peak" style="height:94%"></div><div class="bar-label">1p</div></div>
-          <div class="bar-col"><div class="bar" style="height:60%"></div><div class="bar-label">2p</div></div>
-          <div class="bar-col"><div class="bar offpeak" style="height:22%"></div><div class="bar-label">3p</div></div>
-          <div class="bar-col"><div class="bar offpeak" style="height:30%"></div><div class="bar-label">4p</div></div>
-          <div class="bar-col"><div class="bar" style="height:55%"></div><div class="bar-label">5p</div></div>
-          <div class="bar-col"><div class="bar peak" style="height:88%"></div><div class="bar-label">6p</div></div>
-          <div class="bar-col"><div class="bar" style="height:65%"></div><div class="bar-label">7p</div></div>
+    <div class="subview active" id="t-overview">
+      <div class="kpis">
+        <div class="kpi"><div class="label">Expected visitors today</div><div class="value">1,180</div><div class="delta">▲ 6% vs last Sat</div></div>
+        <div class="kpi"><div class="label">Green Time redemptions</div><div class="value">142</div><div class="delta">▲ 31 this week</div></div>
+        <div class="kpi"><div class="label">Avg. queue at peak</div><div class="value">9 min</div><div class="delta">▼ 4 min saved</div></div>
+        <div class="kpi eco"><div class="label">Your CO₂e avoided (month)</div><div class="value">86 kg</div><div class="delta">Shared on mall ESG report</div></div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <h3>Your expected traffic today</h3>
+          <div class="sub">Forecast from zone sensors, updated every 15 minutes</div>
+          <div class="bars" id="tenant-bars"></div>
+          <div class="legend">
+            <span><i style="background:var(--d4)"></i>Crowded</span>
+            <span><i style="background:var(--d3)"></i>Busy</span>
+            <span><i style="background:var(--d2)"></i>Moderate</span>
+            <span><i style="background:var(--d1)"></i>Quiet, good for Green Time</span>
+          </div>
         </div>
+        <div class="panel">
+          <h3>Staffing advice</h3>
+          <div class="sub">Forecast compared with your shift plan</div>
+          <div class="row"><span>11:00 to 12:00</span><span class="status ok">On track</span></div>
+          <div class="row"><span>12:00 to 14:00</span><span class="status bad">Add 2 staff</span></div>
+          <div class="row"><span>14:30 to 16:30</span><span class="status warn">1 more than needed</span></div>
+          <div class="row"><span>17:30 to 20:00</span><span class="status bad">Add 1 staff</span></div>
+        </div>
+      </div>
+
+      <div class="grid2 even">
+        <div class="panel">
+          <h3>Your sales <span class="lock-tag">🔒 Your store only</span></h3>
+          <div class="sub">From your POS. Not shown to other tenants or mall operations.</div>
+          <div id="sales-box">
+            <div class="row"><span class="k">Sales today (so far)</span><span class="v">฿48,320</span></div>
+            <div class="row"><span class="k">Sales from Green Time deals</span><span class="v">฿11,960</span></div>
+            <div class="row"><span class="k">Gross margin this month</span><span class="v">61%</span></div>
+            <div class="row"><span class="k">Platform fee this month</span><span class="v">฿1,450</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>How you compare <span class="agg-tag">Anonymous benchmark</span></h3>
+          <div class="sub">Against the average of 14 Food Court tenants. No store is named.</div>
+          <div class="row"><span class="k">Off-peak share of your visitors</span><span class="v">34% <span style="color:#2f7a48">(zone avg 27%)</span></span></div>
+          <div class="row"><span class="k">Green Time redemption rate</span><span class="v">12% <span style="color:#2f7a48">(zone avg 9%)</span></span></div>
+          <div class="row"><span class="k">Peak queue time</span><span class="v">9 min <span style="color:var(--d4)">(zone avg 7 min)</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subview" id="t-promos">
+      <div class="grid2">
+        <div class="panel">
+          <h3>Create a Green Time promotion</h3>
+          <div class="sub">Pull customers into your quiet hours. The app shows it to shoppers nearby and adds 2× M Card points automatically.</div>
+          <div class="form-grid">
+            <div class="field">Deal title<input id="pf-title" value="Set A + B" oninput="previewPromo()" /></div>
+            <div class="field">Discount<select id="pf-disc" onchange="previewPromo()"><option>10%</option><option selected>15%</option><option>20%</option><option>Free drink</option></select></div>
+            <div class="field">From<select id="pf-from" onchange="previewPromo()"><option>14:00</option><option selected>14:30</option><option>15:00</option></select></div>
+            <div class="field">Until<select id="pf-to" onchange="previewPromo()"><option>16:30</option><option selected>17:00</option><option>17:30</option></select></div>
+          </div>
+          <div class="sl" style="margin-top:6px">What shoppers will see</div>
+          <div class="offer-card preview-offer"><div class="offer-logo">SS</div><div class="offer-info"><div class="name" id="pv-name">SushiSushi</div><div class="desc" id="pv-desc"></div></div><span class="lvl l1" id="pv-pct"></span></div>
+          <button class="btn tenant-admin-only" style="margin-top:12px" onclick="publishPromo()">Publish promotion</button>
+          <p class="tenant-staff-only" style="font-size:12.5px;color:#4b3f9e;margin:12px 0 0">🔒 Only your store admin can publish promotions. Your draft will be sent to them.</p>
+          <button class="btn light tenant-staff-only" style="margin-top:8px" onclick="toast('Draft sent to your store admin.')">Send draft to admin</button>
+        </div>
+        <div class="panel">
+          <h3>Your promotions</h3>
+          <div class="sub">Live and scheduled</div>
+          <div id="promo-list">
+            <div class="row"><span><b>Set A + B, 15% off</b><br><span class="k" style="font-size:12px">14:30 to 17:00, daily</span></span><span class="status ok">Live</span></div>
+            <div class="row"><span><b>Free green tea</b><br><span class="k" style="font-size:12px">Weekdays 15:00 to 16:30</span></span><span class="status warn">Scheduled</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subview" id="t-team">
+      <div class="grid2">
+        <div class="panel">
+          <h3>Store team</h3>
+          <div class="sub">You're the tenant admin for SushiSushi. You decide who on your team can see what.</div>
+          <div class="table-wrap">
+          <table class="matrix">
+            <tr><th>Person</th><th>Role</th><th>Sees sales</th><th>Publishes deals</th><th></th></tr>
+            <tr><td>Khun Arthit (you)</td><td>Tenant admin</td><td class="p-full">Yes</td><td class="p-full">Yes</td><td></td></tr>
+            <tr><td>Khun Ploy</td><td>Shift lead</td><td class="p-no">No</td><td class="p-no">Drafts only</td><td><button class="btn light" style="padding:5px 10px;font-size:12px" onclick="toast('Access updated for Khun Ploy.')">Edit</button></td></tr>
+            <tr><td>Khun Beam</td><td>Staff</td><td class="p-no">No</td><td class="p-no">No</td><td><button class="btn light" style="padding:5px 10px;font-size:12px" onclick="toast('Access updated for Khun Beam.')">Edit</button></td></tr>
+          </table>
+          </div>
+          <button class="btn" style="margin-top:12px" onclick="toast('Invite code TS-' + Math.floor(1000+Math.random()*9000) + ' created. Valid for 24 hours.')">Invite team member</button>
+        </div>
+        <div class="panel">
+          <h3>Store access code</h3>
+          <div class="sub">Change it if someone leaves your team.</div>
+          <div class="row"><span class="k">Admin code</span><span class="v">TN-••21</span></div>
+          <div class="row"><span class="k">Staff code</span><span class="v">TS-••90</span></div>
+          <div class="row"><span class="k">Last changed</span><span class="v">12 Sep 2026</span></div>
+          <button class="btn light" style="margin-top:12px" onclick="toast('Staff code rotated. Old code no longer works.')">Rotate staff code</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MALL OPERATIONS ================= -->
+  <section id="view-mall" class="hidden">
+    <div class="view-header">
+      <h1>Spread the crowd, cut emissions, grow sales</h1>
+      <p>Lower emissions and higher profit don't have to pull against each other. Moving shoppers out of peak hours trims the peak cooling and lighting load and turns long queues into completed purchases.</p>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi eco"><div class="label">CO₂e avoided this month</div><div class="value">6.4 t</div><div class="delta">▲ on track for 2026 target</div></div>
+      <div class="kpi eco"><div class="label">Energy saved vs baseline</div><div class="value">12,900 kWh</div><div class="delta">▲ 9% lower peak load</div></div>
+      <div class="kpi"><div class="label">Sales recovered from peak walk-outs</div><div class="value">฿342k</div><div class="delta">▲ this month, pilot zones</div></div>
+      <div class="kpi"><div class="label">Visitors shifted off-peak</div><div class="value">18%</div><div class="delta">▲ 4 pts vs last month</div></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:18px">
+      <h3>Win–win calculator</h3>
+      <div class="sub">Drag to see what happens when more peak-hour visitors come at quieter times. Illustrative model for discussion, tuned to one mall branch.</div>
+      <div class="slider-head"><span>Peak visitors shifted to off-peak</span><span id="sim-pct">18%</span></div>
+      <input type="range" min="0" max="40" value="18" id="sim-range" oninput="runSim()" aria-label="Percent of peak visitors shifted" />
+      <div class="sim">
+        <div class="box eco"><b id="sim-co2">–</b><span>CO₂e avoided per month</span></div>
+        <div class="box money"><b id="sim-rev">–</b><span>extra sales per month from shorter queues</span></div>
+        <div class="box people"><b id="sim-q">–</b><span>average peak queue</span></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3>Footfall today, before vs with CrowdWise</h3>
+        <div class="sub">Whole mall, visitors per hour. Flatter is cheaper to run.</div>
+        <div class="bars" id="mall-bars"></div>
         <div class="legend">
-          <span><i style="background:var(--red)"></i>Peak</span>
-          <span><i style="background:var(--forest-mid)"></i>Normal</span>
-          <span><i style="background:var(--gold)"></i>Green Time window</span>
+          <span><i style="background:#c9d3cc"></i>Without CrowdWise</span>
+          <span><i style="background:var(--forest-mid)"></i>With CrowdWise</span>
         </div>
       </div>
-
       <div class="panel">
-        <h3>Tenant staffing signal</h3>
-        <div class="sub">Based on forecast vs. current schedule</div>
-        <div class="tenant-row"><span class="tenant-name">MK Restaurant</span><span class="tenant-status understaff">Understaffed 1–2p</span></div>
-        <div class="tenant-row"><span class="tenant-name">Kinokuniya</span><span class="tenant-status ok">On track</span></div>
-        <div class="tenant-row"><span class="tenant-name">Cinema Hall 3</span><span class="tenant-status over">Overstaffed 3–4p</span></div>
-        <div class="tenant-row"><span class="tenant-name">Central Food Hall</span><span class="tenant-status understaff">Understaffed 6–7p</span></div>
-        <div class="tenant-row"><span class="tenant-name">Uniqlo</span><span class="tenant-status ok">On track</span></div>
+        <h3>Crowd level by floor and zone</h3>
+        <div class="sub">Live, every zone colored</div>
+        <div class="heat" id="heat"></div>
       </div>
     </div>
 
-    <div class="dash-main" style="margin-top:20px;">
+    <div class="grid2 even">
       <div class="panel">
-        <h3>Public ESG dashboard preview</h3>
+        <h3>Tenant sales <span class="agg-tag">Aggregated by zone</span></h3>
+        <div class="sub">Individual store sales and margins are hidden from mall operations. Zones with fewer than 5 stores are merged.</div>
+        <div class="row"><span class="k">Food Court (14 stores)</span><span class="v">฿1.24M <span style="color:#2f7a48">▲ 7%</span></span></div>
+        <div class="row"><span class="k">Fashion 2F (22 stores)</span><span class="v">฿2.08M <span style="color:#2f7a48">▲ 3%</span></span></div>
+        <div class="row"><span class="k">Electronics 2F (9 stores)</span><span class="v">฿1.61M <span style="color:#2f7a48">▲ 2%</span></span></div>
+        <div class="row"><span class="k">Restaurants 3F + 4F (merged)</span><span class="v">฿0.93M <span style="color:#2f7a48">▲ 9%</span></span></div>
+      </div>
+      <div class="panel">
+        <h3>Tenant staffing signals</h3>
+        <div class="sub">Shown without any sales figures</div>
+        <div class="row"><span>MK Restaurant</span><span class="status bad">Short 12:00 to 14:00</span></div>
+        <div class="row"><span>SushiSushi</span><span class="status bad">Short 12:00 to 14:00</span></div>
+        <div class="row"><span>Cinema Hall 3</span><span class="status warn">Extra 15:00 to 16:00</span></div>
+        <div class="row"><span>Uniqlo</span><span class="status ok">On track</span></div>
+      </div>
+    </div>
+
+    <div class="grid2 even">
+      <div class="panel">
+        <h3>Public ESG page preview</h3>
         <div class="sub">What shoppers and investors see</div>
-        <div class="esg-row"><span class="k">kWh saved vs. baseline</span><span class="v">3,240 kWh</span></div>
-        <div class="esg-row"><span class="k">CO₂e reduced</span><span class="v">1.4 tonnes</span></div>
-        <div class="esg-row"><span class="k">Parking search time avoided</span><span class="v">410 hrs</span></div>
-        <div class="esg-row"><span class="k">Accessible time-slot adoption</span><span class="v">27%</span></div>
+        <div class="row"><span class="k">CO₂e avoided in 2026 so far</span><span class="v">41.8 tonnes</span></div>
+        <div class="row"><span class="k">That equals</span><span class="v">≈ 1,900 trees for a year</span></div>
+        <div class="row"><span class="k">Parking search time avoided</span><span class="v">2,640 hrs</span></div>
+        <div class="row"><span class="k">Shoppers taking part</span><span class="v">38,400</span></div>
       </div>
       <div class="panel">
-        <h3>Green Time revenue impact</h3>
-        <div class="sub">Estimated, current pilot zone</div>
-        <div class="esg-row"><span class="k">Off-peak transactions uplifted</span><span class="v">+412</span></div>
-        <div class="esg-row"><span class="k">Recovered peak-hour sales</span><span class="v">฿86,400</span></div>
-        <div class="esg-row"><span class="k">Self-serve promos launched</span><span class="v">14 tenants</span></div>
-        <div class="esg-row"><span class="k">Platform fee revenue</span><span class="v">฿9,200</span></div>
+        <h3>M Card points cost</h3>
+        <div class="sub">Green Points funded by the mall this month</div>
+        <div class="row"><span class="k">Green Points issued</span><span class="v">1.86M pts</span></div>
+        <div class="row"><span class="k">Estimated cost</span><span class="v">฿18,600</span></div>
+        <div class="row"><span class="k">Recovered sales per ฿1 of points</span><span class="v">฿18.4</span></div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <footer class="note">Rough demo for mentor session · sample data, not live · CrowdWise — Team Long Do Na</footer>
+  <!-- ================= SYSTEM ADMIN ================= -->
+  <section id="view-admin" class="hidden">
+    <div class="view-header">
+      <h1>Who can see what</h1>
+      <p>Two admin levels: system admins (THE MALL IT and CrowdWise) manage roles, codes and integrations for everyone; tenant admins manage only their own store team.</p>
+    </div>
+
+    <div class="subtabs">
+      <button class="subtab active" data-sv="a-perm" onclick="subTab(this)">Data permissions</button>
+      <button class="subtab" data-sv="a-accounts" onclick="subTab(this)">Accounts &amp; codes</button>
+      <button class="subtab" data-sv="a-log" onclick="subTab(this)">Audit log</button>
+      <button class="subtab" data-sv="a-int" onclick="subTab(this)">Integrations</button>
+    </div>
+
+    <div class="subview active" id="a-perm">
+      <div class="panel">
+        <h3>Permission matrix</h3>
+        <div class="sub">Each data type and who can access it. Changes are logged.</div>
+        <div class="table-wrap">
+        <table class="matrix">
+          <tr><th>Data</th><th>Shopper</th><th>Tenant staff</th><th>Tenant admin</th><th>Mall operations</th><th>System admin</th></tr>
+          <tr><td>Live crowd level per zone</td><td class="p-full">View</td><td class="p-full">View</td><td class="p-full">View</td><td class="p-full">View</td><td class="p-full">View</td></tr>
+          <tr><td>Shopper name, M Card number</td><td class="p-own">Own only</td><td class="p-no">—</td><td class="p-no">—</td><td class="p-no">—</td><td class="p-agg">Masked</td></tr>
+          <tr><td>Shopper location</td><td class="p-own">Own only</td><td class="p-no">—</td><td class="p-no">—</td><td class="p-agg">Counts only</td><td class="p-agg">Counts only</td></tr>
+          <tr><td>Store sales and margin</td><td class="p-no">—</td><td class="p-no">—</td><td class="p-own">Own store</td><td class="p-agg">By zone (min 5 stores)</td><td class="p-no">—</td></tr>
+          <tr><td>Store traffic forecast</td><td class="p-no">—</td><td class="p-own">Own store</td><td class="p-own">Own store</td><td class="p-full">All</td><td class="p-no">—</td></tr>
+          <tr><td>Publish Green Time deals</td><td class="p-no">—</td><td class="p-agg">Draft</td><td class="p-own">Own store</td><td class="p-full">Approve all</td><td class="p-no">—</td></tr>
+          <tr><td>Emission and ESG figures</td><td class="p-own">Own impact</td><td class="p-own">Own store</td><td class="p-own">Own store</td><td class="p-full">All</td><td class="p-full">All</td></tr>
+          <tr><td>Accounts, roles, access codes</td><td class="p-no">—</td><td class="p-no">—</td><td class="p-own">Own team</td><td class="p-no">—</td><td class="p-full">All</td></tr>
+        </table>
+        </div>
+        <div class="legend" style="margin-top:12px">
+          <span class="p-full">● Full</span><span class="p-own">● Own data only</span><span class="p-agg">● Aggregated or masked</span><span class="p-no">● No access</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="subview" id="a-accounts">
+      <div class="grid2">
+        <div class="panel">
+          <h3>Accounts</h3>
+          <div class="sub">Shoppers sign in through THE MALL account, so they aren't managed here.</div>
+          <div class="table-wrap">
+          <table class="matrix">
+            <tr><th>Account</th><th>Role</th><th>Scope</th><th>Status</th></tr>
+            <tr><td>Arthit K.</td><td>Tenant admin</td><td>SushiSushi</td><td><span class="status ok">Active</span></td></tr>
+            <tr><td>Ploy S.</td><td>Tenant staff</td><td>SushiSushi</td><td><span class="status ok">Active</span></td></tr>
+            <tr><td>Somchai R.</td><td>Mall operations</td><td>Bangkapi branch</td><td><span class="status ok">Active</span></td></tr>
+            <tr><td>Kanya T.</td><td>Tenant admin</td><td>MK Restaurant</td><td><span class="status warn">Invite sent</span></td></tr>
+            <tr><td>it-admin-02</td><td>System admin</td><td>All branches</td><td><span class="status info">2FA on</span></td></tr>
+          </table>
+          </div>
+          <button class="btn" style="margin-top:12px" onclick="toast('New account form opened (demo).')">Add account</button>
+        </div>
+        <div class="panel">
+          <h3>Access codes</h3>
+          <div class="sub">One code per role and store. Rotate anytime.</div>
+          <div class="row"><span class="k">Mall operations</span><span class="v">MO-••50</span></div>
+          <div class="row"><span class="k">Tenant admin codes</span><span class="v">86 stores</span></div>
+          <div class="row"><span class="k">Tenant staff codes</span><span class="v">86 stores</span></div>
+          <div class="row"><span class="k">Codes expiring in 7 days</span><span class="v">4</span></div>
+          <button class="btn light" style="margin-top:12px" onclick="toast('Mall operations code rotated.')">Rotate mall operations code</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="subview" id="a-log">
+      <div class="panel">
+        <h3>Audit log</h3>
+        <div class="sub">Every sign-in and every view of protected data</div>
+        <div class="row"><span>13:38 · Arthit K. (tenant admin) viewed own store sales</span><span class="status ok">Allowed</span></div>
+        <div class="row"><span>13:21 · Ploy S. (tenant staff) tried to open store sales</span><span class="status bad">Blocked</span></div>
+        <div class="row"><span>12:55 · Somchai R. (mall ops) viewed zone sales, Food Court</span><span class="status ok">Allowed</span></div>
+        <div class="row"><span>12:40 · Somchai R. (mall ops) requested SushiSushi sales</span><span class="status bad">Blocked</span></div>
+        <div class="row"><span>11:02 · it-admin-02 rotated staff code for MK Restaurant</span><span class="status info">Change</span></div>
+      </div>
+    </div>
+
+    <div class="subview" id="a-int">
+      <div class="grid2 even">
+        <div class="panel">
+          <h3>Connected systems</h3>
+          <div class="sub">What CrowdWise needs from THE MALL</div>
+          <div class="row"><span>THE MALL account sign-in</span><span class="status ok">Connected</span></div>
+          <div class="row"><span>M Card points</span><span class="status ok">Connected</span></div>
+          <div class="row"><span>Zone people counters</span><span class="status ok">48 of 52 online</span></div>
+          <div class="row"><span>Parking sensors</span><span class="status ok">Connected</span></div>
+          <div class="row"><span>Tenant POS (opt-in)</span><span class="status warn">31 of 86 stores</span></div>
+          <div class="row"><span>Building energy meters</span><span class="status warn">Pilot floors only</span></div>
+        </div>
+        <div class="panel">
+          <h3>Data protection</h3>
+          <div class="sub">Built in, not added later</div>
+          <div class="row"><span class="k">Shopper consent</span><span class="v">Asked at first sign-in</span></div>
+          <div class="row"><span class="k">Location data kept</span><span class="v">As counts, raw deleted after 24 h</span></div>
+          <div class="row"><span class="k">Store data separation</span><span class="v">Per-store access</span></div>
+          <div class="row"><span class="k">Regulation</span><span class="v">Thailand PDPA</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="note">Demo for THE MALL meeting · sample data, not live · CrowdWise, Team Long Do Na</footer>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-  // Top-level: Consumer App / Mall Dashboard
-  const tabs = document.querySelectorAll('.tab-btn');
-  const views = document.querySelectorAll('.view');
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabs.forEach(b => b.classList.remove('active'));
-      views.forEach(v => v.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('view-' + btn.dataset.view).classList.add('active');
-    });
-  });
-
-  // Phone-internal tabbar: Explore / Trip / Offers / Profile
-  function switchPhoneTab(btn){
-    document.querySelectorAll('.tabbar-item').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.phone-view').forEach(v => v.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
-    document.querySelector('.phone-body').scrollTop = 0;
-  }
-
-  // Department store floor selector — swaps in that floor's map
-  const FLOOR_CAPTIONS = {
-    '4F': 'Showing 4F — Cinema Lobby is filling up.',
-    '3F': 'Showing 3F — Food Court is busy right now.',
-    '2F': 'Showing 2F — retail floor, no live density yet.',
-    '1F': 'Showing 1F — main entrance & pickup.'
+  /* ---------- Roles & access ---------- */
+  const CODES = { 'TN-4821':'tenant-admin', 'TS-1190':'tenant-staff', 'MO-7350':'mall', 'SA-0001':'admin' };
+  const ROLE_INFO = {
+    'shopper':      { label:'Shopper · Khun Nida', view:'shopper',
+      can:'Crowd levels, own trip, own points', cannot:'Any store or other shopper data' },
+    'tenant-admin': { label:'Tenant admin · SushiSushi', view:'tenant',
+      can:'Own store sales, forecast, deals, team', cannot:'Other stores, shopper identities' },
+    'tenant-staff': { label:'Tenant staff · SushiSushi', view:'tenant',
+      can:'Own store forecast and staffing', cannot:'Sales, publishing deals, team settings' },
+    'mall':         { label:'Mall operations · Bangkapi', view:'mall',
+      can:'Mall-wide crowd, ESG, zone-level sales', cannot:'Individual store sales, shopper identities' },
+    'admin':        { label:'System admin', view:'admin',
+      can:'Accounts, roles, codes, audit log', cannot:'Store sales, unmasked shopper data' }
   };
-  function showFloor(btn, floor){
-    document.querySelectorAll('.floor-pill').forEach(p => p.classList.remove('active'));
+  let pendingRole = null;
+
+  function pickRole(r){
+    document.getElementById('login-shopper').classList.add('hidden');
+    document.getElementById('login-code').classList.add('hidden');
+    if(r === 'shopper'){
+      document.getElementById('login-shopper').classList.remove('hidden');
+      document.getElementById('login-shopper').scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    pendingRole = r;
+    const titles = { tenant:'Tenant sign-in', mall:'Mall operations sign-in', admin:'System admin sign-in' };
+    const subs = { tenant:'Use your store admin code or staff code. Each gives different access.', mall:'Code issued by THE MALL system admin.', admin:'Restricted. All actions are logged.' };
+    document.getElementById('code-title').textContent = titles[r];
+    document.getElementById('code-sub').textContent = subs[r];
+    document.getElementById('code-err').textContent = '';
+    const inp = document.getElementById('code-input');
+    inp.value = '';
+    document.getElementById('login-code').classList.remove('hidden');
+    document.getElementById('login-code').scrollIntoView({behavior:'smooth', block:'center'});
+    inp.focus({preventScroll:true});
+  }
+
+  function submitCode(){
+    const code = document.getElementById('code-input').value.trim().toUpperCase();
+    const role = CODES[code];
+    const err = document.getElementById('code-err');
+    if(!role){ err.textContent = 'That code isn\'t recognised. Check it with your admin.'; return; }
+    const group = role.startsWith('tenant') ? 'tenant' : role;
+    if(group !== pendingRole){ err.textContent = 'This code belongs to a different sign-in. Choose the matching role above.'; return; }
+    login(role);
+  }
+  document.getElementById('code-input').addEventListener('keydown', e => { if(e.key === 'Enter') submitCode(); });
+
+  function login(role){
+    const info = ROLE_INFO[role];
+    ['login','shopper','tenant','mall','admin'].forEach(v => document.getElementById('view-'+v).classList.add('hidden'));
+    document.getElementById('view-'+info.view).classList.remove('hidden');
+    document.getElementById('role-chip').classList.remove('hidden');
+    document.getElementById('btn-switch').classList.remove('hidden');
+    document.getElementById('role-chip-text').textContent = info.label;
+    const scope = document.getElementById('scope');
+    scope.innerHTML = '<span><b>Access scope</b></span><span class="can">✓ ' + info.can + '</span><span class="cannot">✕ ' + info.cannot + '</span>';
+    scope.classList.remove('hidden');
+    if(info.view === 'tenant') applyTenantRole(role);
+    window.scrollTo(0,0);
+  }
+
+  function logout(){
+    ['shopper','tenant','mall','admin'].forEach(v => document.getElementById('view-'+v).classList.add('hidden'));
+    document.getElementById('view-login').classList.remove('hidden');
+    document.getElementById('login-shopper').classList.add('hidden');
+    document.getElementById('login-code').classList.add('hidden');
+    document.getElementById('role-chip').classList.add('hidden');
+    document.getElementById('btn-switch').classList.add('hidden');
+    document.getElementById('scope').classList.add('hidden');
+    window.scrollTo(0,0);
+  }
+
+  function applyTenantRole(role){
+    const admin = role === 'tenant-admin';
+    document.querySelectorAll('.tenant-admin-only').forEach(el => el.classList.toggle('hidden', !admin));
+    document.querySelectorAll('.tenant-staff-only').forEach(el => el.classList.toggle('hidden', admin));
+    const box = document.getElementById('sales-box');
+    if(admin){
+      box.parentElement.classList.remove('locked');
+      box.classList.remove('blur');
+      const over = box.parentElement.querySelector('.lock-over'); if(over) over.remove();
+    } else {
+      box.parentElement.classList.add('locked');
+      box.classList.add('blur');
+      if(!box.parentElement.querySelector('.lock-over')){
+        const o = document.createElement('div'); o.className = 'lock-over';
+        o.innerHTML = '🔒 Store admin only<small>Your role can see traffic and staffing, but not sales. Ask your store admin if you need access.</small>';
+        box.parentElement.appendChild(o);
+      }
+    }
+    // reset subtabs to overview
+    const first = document.querySelector('#view-tenant .subtab');
+    subTab(first);
+  }
+
+  function subTab(btn){
+    const section = btn.closest('section');
+    section.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
+    section.querySelectorAll('.subview').forEach(v => v.classList.remove('active'));
     btn.classList.add('active');
-
-    document.querySelectorAll('.floor-plan').forEach(svg => svg.classList.remove('active'));
-    document.getElementById('fp-' + floor).classList.add('active');
-
-    document.getElementById('map-caption').textContent = FLOOR_CAPTIONS[floor];
+    document.getElementById(btn.dataset.sv).classList.add('active');
   }
 
-  function pulse(el){
-    el.style.transition = 'transform .12s';
-    el.style.transform = 'scale(0.98)';
-    setTimeout(() => el.style.transform = 'scale(1)', 120);
+  /* ---------- Zone data: every zone has a crowd level 1–4 ---------- */
+  const LV = {
+    1:{ name:'Quiet',    fg:'#3E9B5F', bg:'#DDF0E2', text:'#24663b' },
+    2:{ name:'Moderate', fg:'#C99A1E', bg:'#FBF0CF', text:'#7d5f0e' },
+    3:{ name:'Busy',     fg:'#E07B39', bg:'#FBE2D0', text:'#9a4c1a' },
+    4:{ name:'Crowded',  fg:'#C9443A', bg:'#F7D6D2', text:'#9b2c24' }
+  };
+  const FLOORS = {
+    '4F':[
+      { n:'Cinema Lobby', l:3, wait:'Filling up by 19:00', best:'Arrive 15 min before your show', x:170,y:20,w:130,h:62 },
+      { n:'Cinema Halls', l:2, wait:'6 of 10 halls showing', best:'Weekday matinees are quietest', x:20,y:20,w:140,h:62 },
+      { n:'Game Zone',    l:2, wait:'Most machines free', best:'Before 16:00', x:20,y:128,w:110,h:60 },
+      { n:'Fitness',      l:1, wait:'No wait', best:'Anytime now', x:190,y:128,w:110,h:60 }
+    ],
+    '3F':[
+      { n:'Food Court',   l:4, wait:'18–22 min wait', best:'Come back after 14:30 (−15% Green Time)', x:170,y:20,w:130,h:62 },
+      { n:'Supermarket',  l:2, wait:'2 of 8 checkouts queued', best:'Before 17:00', x:20,y:20,w:140,h:62 },
+      { n:'Restaurants',  l:3, wait:'10 min average', best:'Book ahead or come at 16:00', x:20,y:128,w:110,h:60 },
+      { n:'Kids Zone',    l:1, wait:'No wait', best:'Anytime now', x:190,y:128,w:110,h:60 }
+    ],
+    '2F':[
+      { n:'Electronics',  l:2, wait:'Staff available', best:'Weekday evenings', x:170,y:20,w:130,h:62 },
+      { n:'Fashion',      l:2, wait:'Fitting rooms 3 min', best:'Before 17:00', x:20,y:20,w:140,h:62 },
+      { n:'Beauty',       l:1, wait:'No wait', best:'Anytime now', x:20,y:128,w:110,h:60 },
+      { n:'Cafés',        l:1, wait:'Seats free', best:'Good alternative to the Food Court', x:190,y:128,w:110,h:60 }
+    ],
+    '1F':[
+      { n:'Anchor Store', l:2, wait:'Cashiers 4 min', best:'Before 16:00', x:170,y:20,w:130,h:62 },
+      { n:'Info Counter', l:1, wait:'No wait', best:'Anytime now', x:20,y:20,w:140,h:62 },
+      { n:'Café Row',     l:3, wait:'8 min queue', best:'Try 2F cafés instead', x:20,y:128,w:110,h:60 },
+      { n:'Taxi & Pickup',l:3, wait:'6 min for a taxi', best:'Use the B3 side exit', x:190,y:128,w:110,h:60 }
+    ]
+  };
+  let currentFloor = '3F', selectedZone = 0;
+
+  function zoneRowHTML(z, floor, onclick){
+    return '<button class="zone-row l'+z.l+'" onclick="'+onclick+'"><span><span class="n">'+z.n+'</span><span class="floor-chip">'+floor+'</span><br><span class="m">'+z.wait+'</span></span><span class="lvl l'+z.l+'">'+LV[z.l].name+'</span></button>';
   }
+
+  function renderHomeZones(){
+    const all = [];
+    Object.keys(FLOORS).forEach(f => FLOORS[f].forEach((z,i) => all.push({z,f,i})));
+    all.sort((a,b) => b.z.l - a.z.l);
+    document.getElementById('home-zones').innerHTML = all.slice(0,3)
+      .map(o => zoneRowHTML(o.z, o.f, "openZone('"+o.f+"',"+o.i+")")).join('');
+  }
+
+  function renderFloorTabs(){
+    document.getElementById('floor-tabs').innerHTML = ['4F','3F','2F','1F']
+      .map(f => '<button class="floor-pill'+(f===currentFloor?' active':'')+'" onclick="showFloor(\''+f+'\')">'+f+'</button>').join('');
+  }
+
+  function renderMap(){
+    const zones = FLOORS[currentFloor];
+    let s = '<rect x="6" y="6" width="308" height="198" rx="18" fill="#fff" stroke="#14261c" stroke-width="2.5"/>';
+    zones.forEach((z,i) => {
+      const c = LV[z.l];
+      s += '<rect class="zrect'+(i===selectedZone?' sel':'')+'" tabindex="0" role="button" aria-label="'+z.n+', '+c.name+'" x="'+z.x+'" y="'+z.y+'" width="'+z.w+'" height="'+z.h+'" rx="9" fill="'+c.bg+'" stroke="'+c.fg+'" onclick="selectZone('+i+')" onkeydown="if(event.key===\'Enter\')selectZone('+i+')"/>';
+      s += '<circle cx="'+(z.x+12)+'" cy="'+(z.y+12)+'" r="4" fill="'+c.fg+'"/>';
+      s += '<text class="ztext" x="'+(z.x+z.w/2)+'" y="'+(z.y+z.h/2)+'" text-anchor="middle" fill="'+c.text+'">'+z.n+'</text>';
+      s += '<text class="zsub" x="'+(z.x+z.w/2)+'" y="'+(z.y+z.h/2+14)+'" text-anchor="middle">'+c.name+'</text>';
+    });
+    // corridor + escalator + WC + entrances
+    s += '<rect x="138" y="92" width="44" height="24" rx="5" fill="#fff" stroke="#2D5A45" stroke-width="1.2"/><text x="160" y="107" text-anchor="middle" font-size="8" font-weight="700" fill="#1B4332">⇅ Esc.</text>';
+    s += '<rect x="20" y="95" width="26" height="18" rx="4" fill="#fff" stroke="#2D5A45"/><text x="33" y="107" text-anchor="middle" font-size="7" font-weight="700" fill="#2D5A45">WC</text>';
+    s += '<text x="290" y="108" text-anchor="end" font-size="7.5" font-weight="800" fill="#0F2A1E">PARKING ▸</text>';
+    if(currentFloor === '1F'){
+      s += '<circle cx="160" cy="196" r="4" fill="#1B4332"/><circle cx="160" cy="196" r="8" fill="none" stroke="#1B4332" opacity=".5"/><text x="178" y="199" font-size="7" fill="#4a564f">You are here</text>';
+    }
+    document.getElementById('floor-svg').innerHTML = s;
+    renderSheet();
+    document.getElementById('floor-zones').innerHTML = zones
+      .map((z,i) => zoneRowHTML(z, currentFloor, 'selectZone('+i+')')).join('');
+  }
+
+  function renderSheet(){
+    const z = FLOORS[currentFloor][selectedZone];
+    document.getElementById('zone-sheet').style.borderColor = LV[z.l].fg;
+    document.getElementById('zone-sheet').innerHTML =
+      '<div class="t"><span>'+z.n+' <span class="floor-chip">'+currentFloor+'</span></span><span class="lvl l'+z.l+'">'+LV[z.l].name+'</span></div>' +
+      '<div class="d">'+z.wait+'<br><b>Better time:</b> '+z.best+'</div>';
+  }
+
+  function showFloor(f){
+    currentFloor = f;
+    const zones = FLOORS[f];
+    selectedZone = zones.reduce((m,z,i) => z.l > zones[m].l ? i : m, 0);
+    renderFloorTabs(); renderMap();
+  }
+  function selectZone(i){ selectedZone = i; renderMap(); }
+  function openZone(f,i){ goTab('pv-map'); currentFloor = f; selectedZone = i; renderFloorTabs(); renderMap(); }
+
+  function goTab(id){
+    document.querySelectorAll('.tb').forEach(t => t.classList.toggle('active', t.dataset.tab === id));
+    document.querySelectorAll('.pv').forEach(v => v.classList.toggle('active', v.id === id));
+    const titles = { 'pv-home':'The Mall Bangkapi', 'pv-map':'Crowd map', 'pv-trip':'Smart trip', 'pv-rewards':'Rewards', 'pv-profile':'My account' };
+    document.getElementById('phone-title').textContent = titles[id];
+    document.getElementById('phone-body').scrollTop = 0;
+  }
+
+  /* ---------- Rewards ---------- */
+  let points = 2450;
+  const OFFERS = [
+    { logo:'SS', name:'SushiSushi', desc:'Set A + B, 14:30–17:00', pct:'15% off' },
+    { logo:'MK', name:'MK Restaurant', desc:'Suki set, 14:00–16:30', pct:'10% off' },
+    { logo:'☕', name:'2F Cafés', desc:'Any drink before 12:00', pct:'Free size up' }
+  ];
+  function renderOffers(){
+    document.getElementById('offer-list').innerHTML = OFFERS.map(o =>
+      '<div class="offer-card"><div class="offer-logo">'+o.logo+'</div><div class="offer-info"><div class="name">'+o.name+'</div><div class="desc">'+o.desc+' · '+o.pct+'</div></div><button class="offer-cta" onclick="claim(this)">Get</button></div>'
+    ).join('');
+  }
+  function claim(btn){ btn.textContent = 'Saved'; btn.classList.add('done'); toast('Deal saved. Show it at the counter during Green Time.'); }
+  function redeem(btn, cost){
+    if(points < cost){ toast('Not enough points yet.'); return; }
+    points -= cost; updatePoints();
+    btn.textContent = 'Redeemed'; btn.classList.add('done'); btn.disabled = true;
+    toast(cost.toLocaleString() + ' points used. Your M Card balance is updated.');
+  }
+  function updatePoints(){
+    const s = points.toLocaleString();
+    document.getElementById('pts-balance').textContent = s;
+    document.getElementById('pts-balance-2').textContent = s;
+  }
+
+  /* ---------- Tenant ---------- */
+  const T_HOURS = ['11','12','13','14','15','16','17','18','19','20'];
+  const T_VALS  = [40, 92, 98, 55, 26, 30, 60, 88, 80, 45];
+  function lvlFor(v){ return v >= 85 ? 4 : v >= 60 ? 3 : v >= 38 ? 2 : 1; }
+  function renderTenantBars(){
+    document.getElementById('tenant-bars').innerHTML = T_VALS.map((v,i) =>
+      '<div class="bar-col"><div class="bar-pair"><div class="bar" style="height:'+v+'%;background:'+LV[lvlFor(v)].fg+'"></div></div><div class="bar-label">'+T_HOURS[i]+'</div></div>'
+    ).join('');
+  }
+  function previewPromo(){
+    document.getElementById('pv-desc').textContent = document.getElementById('pf-title').value + ', ' + document.getElementById('pf-from').value + '–' + document.getElementById('pf-to').value;
+    document.getElementById('pv-pct').textContent = document.getElementById('pf-disc').value;
+  }
+  function publishPromo(){
+    const t = document.getElementById('pf-title').value || 'New deal';
+    const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = '<span><b>'+t+', '+document.getElementById('pf-disc').value+'</b><br><span class="k" style="font-size:12px">'+document.getElementById('pf-from').value+' to '+document.getElementById('pf-to').value+'</span></span><span class="status warn">Waiting for mall approval</span>';
+    document.getElementById('promo-list').prepend(row);
+    toast('Promotion sent to mall operations for approval.');
+  }
+
+  /* ---------- Mall ---------- */
+  const M_HOURS = ['10','11','12','13','14','15','16','17','18','19','20','21'];
+  const M_BEFORE = [30,45,70,95,78,50,48,72,98,90,60,35];
+  const M_AFTER  = [36,52,66,80,72,60,58,70,84,80,62,40];
+  function renderMallBars(){
+    document.getElementById('mall-bars').innerHTML = M_HOURS.map((h,i) =>
+      '<div class="bar-col"><div class="bar-pair"><div class="bar" style="height:'+M_BEFORE[i]+'%;background:#c9d3cc"></div><div class="bar" style="height:'+M_AFTER[i]+'%;background:var(--forest-mid)"></div></div><div class="bar-label">'+h+'</div></div>'
+    ).join('');
+  }
+  function renderHeat(){
+    let s = '<div></div>' + [0,1,2,3].map(i => '<div class="h">Zone '+(i+1)+'</div>').join('');
+    ['4F','3F','2F','1F'].forEach(f => {
+      s += '<div class="f">'+f+'</div>';
+      FLOORS[f].forEach(z => { const c = LV[z.l]; s += '<div class="c" style="background:'+c.bg+';color:'+c.text+';border:1px solid '+c.fg+'">'+z.n+'</div>'; });
+    });
+    document.getElementById('heat').innerHTML = s;
+  }
+  // Illustrative model: one branch, ~9,000 peak-hour visitors/day.
+  // Thai grid factor ≈ 0.5 kgCO2e/kWh. Shorter queues recover walk-out sales.
+  function runSim(){
+    const p = +document.getElementById('sim-range').value;
+    document.getElementById('sim-pct').textContent = p + '%';
+    const kwhMonth = p * 717;               // peak HVAC/lighting load trimmed
+    const co2 = kwhMonth * 0.5 / 1000;      // tonnes
+    const rev = p * 19000;                  // baht recovered from walk-outs
+    const q = Math.max(4, 16 - p * 0.3);    // minutes
+    document.getElementById('sim-co2').textContent = co2.toFixed(1) + ' t';
+    document.getElementById('sim-rev').textContent = '฿' + Math.round(rev/1000).toLocaleString() + 'k';
+    document.getElementById('sim-q').textContent = q.toFixed(0) + ' min';
+  }
+
+  /* ---------- Utils ---------- */
+  let toastTimer;
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  renderHomeZones(); renderFloorTabs(); showFloor('3F'); renderOffers();
+  renderTenantBars(); previewPromo(); renderMallBars(); renderHeat(); runSim();
 </script>
-
 </body>
 </html>
