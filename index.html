@@ -151,6 +151,8 @@
   .trip-what{ font-size:13px; flex:1; }
   .trip-what .name{ font-weight:600; display:block; }
   .trip-what .note{ font-size:11.5px; color:var(--muted); }
+  .add-trip-stop{ width:100%; height:42px; margin-top:8px; border:1.5px dashed #9aafa0; border-radius:10px; background:#fff; color:var(--forest-mid); font-size:24px; line-height:1; cursor:pointer; }
+  .add-trip-stop:hover{ background:var(--sage); border-color:var(--forest-mid); }
   .earn{ display:inline-block; font-size:10.5px; font-weight:700; color:#24663b; background:var(--d1-bg); padding:1px 7px; border-radius:10px; margin-top:3px; }
 
   .offer-card{ display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:12px; background:var(--card); margin-bottom:7px; }
@@ -454,6 +456,7 @@
               <div class="trip-step"><div class="trip-time">16:00</div><div class="trip-what"><span class="name">Early dinner, Food Court 3F</span><span class="note">Quiet window before the 17:00 rush</span><br><span class="earn">+50 points · 15% off</span></div></div>
               <div class="trip-step"><div class="trip-time">17:15</div><div class="trip-what"><span class="name">Browse Fashion, 2F</span><span class="note">Moderate, no queues at fitting rooms</span></div></div>
               <div class="trip-step"><div class="trip-time">19:00</div><div class="trip-what"><span class="name">Movie, Cinema Hall 3</span><span class="note">✓ Booked</span></div></div>
+              <button class="add-trip-stop" type="button" aria-label="Add a stop to your trip">+</button>
               <button class="btn full" style="margin-top:12px" onclick="toast('Trip saved. Points are added when you check in at each stop.')">Save this trip</button>
             </div>
 
