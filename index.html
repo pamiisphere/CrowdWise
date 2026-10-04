@@ -107,6 +107,10 @@
   .zone-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:12px; background:var(--card); margin-bottom:7px; cursor:pointer; border-left:5px solid var(--nodata); width:100%; text-align:left; border-top:none; border-right:none; border-bottom:none; }
   #home-zones .zone-row.l3{ background:var(--d3-bg); }
   #home-zones .zone-row.l4{ background:var(--d4-bg); }
+  #floor-zones .zone-row.l1{ background:var(--d1-bg); }
+  #floor-zones .zone-row.l2{ background:var(--d2-bg); }
+  #floor-zones .zone-row.l3{ background:var(--d3-bg); }
+  #floor-zones .zone-row.l4{ background:var(--d4-bg); }
   .zone-row .n{ font-size:13.5px; font-weight:600; }
   .zone-row .m{ font-size:11.5px; color:var(--muted); }
   .floor-chip{ font-size:10px; font-weight:700; color:var(--forest); background:var(--sage); padding:1px 6px; border-radius:6px; margin-left:5px; }
@@ -132,6 +136,12 @@
   .zone-sheet{ margin-top:10px; padding:12px; border-radius:12px; border:1.5px solid var(--line); background:#fff; }
   .zone-sheet .t{ font-weight:700; font-size:14px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
   .zone-sheet .d{ font-size:12px; color:var(--muted); margin-top:4px; line-height:1.45; }
+  .map-dropdown{ margin-top:10px; border:1px solid var(--line); border-radius:12px; background:#fff; overflow:hidden; }
+  .map-dropdown summary{ cursor:pointer; list-style:none; padding:12px; font-size:13px; font-weight:700; color:var(--forest-dark); }
+  .map-dropdown summary::-webkit-details-marker{ display:none; }
+  .map-dropdown summary::after{ content:'▾'; float:right; color:var(--forest-mid); transition:transform .15s; }
+  .map-dropdown[open] summary::after{ transform:rotate(180deg); }
+  .map-dropdown .dropdown-content{ padding:0 10px 5px; }
 
   .parking-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:12px; background:var(--card); margin-bottom:7px; border-left:5px solid; }
 
@@ -398,7 +408,7 @@
                 <button onclick="goTab('pv-map')"><span>🗺️</span>Crowd map</button>
                 <button onclick="goTab('pv-trip')"><span>🧭</span>Plan trip</button>
                 <button onclick="goTab('pv-rewards')"><span>🎁</span>Rewards</button>
-                <button onclick="goTab('pv-map');document.getElementById('parking-anchor').scrollIntoView()"><span>🅿️</span>Parking</button>
+                <button onclick="goTab('pv-map');document.getElementById('parking-dropdown').open=true;document.getElementById('parking-anchor').scrollIntoView()"><span>🅿️</span>Parking</button>
               </div>
 
               <div class="sl">Busiest zones</div>
@@ -422,13 +432,19 @@
                 <span><i style="background:var(--d4)"></i>Crowded</span>
               </div>
               <div class="zone-sheet" id="zone-sheet"></div>
-              <div class="sl">All zones on this floor</div>
-              <div id="floor-zones"></div>
+              <details class="map-dropdown">
+                <summary>All zones on this floor</summary>
+                <div class="dropdown-content" id="floor-zones"></div>
+              </details>
 
-              <div class="sl" id="parking-anchor">Parking</div>
-              <div class="parking-row" style="border-color:var(--d4)"><span class="n" style="font-weight:600;font-size:13.5px">Parking B1</span><span class="lvl l4">3 left</span></div>
-              <div class="parking-row" style="border-color:var(--d2)"><span class="n" style="font-weight:600;font-size:13.5px">Parking B2</span><span class="lvl l2">20 left</span></div>
-              <div class="parking-row" style="border-color:var(--d1)"><span class="n" style="font-weight:600;font-size:13.5px">Parking B3</span><span class="lvl l1">50 left</span></div>
+              <details class="map-dropdown" id="parking-dropdown">
+                <summary id="parking-anchor">Parking</summary>
+                <div class="dropdown-content">
+                  <div class="parking-row" style="border-color:var(--d4)"><span class="n" style="font-weight:600;font-size:13.5px">Parking B1</span><span class="lvl l4">3 left</span></div>
+                  <div class="parking-row" style="border-color:var(--d2)"><span class="n" style="font-weight:600;font-size:13.5px">Parking B2</span><span class="lvl l2">20 left</span></div>
+                  <div class="parking-row" style="border-color:var(--d1)"><span class="n" style="font-weight:600;font-size:13.5px">Parking B3</span><span class="lvl l1">50 left</span></div>
+                </div>
+              </details>
             </div>
 
             <!-- TRIP -->
